@@ -1,0 +1,5 @@
+import PageIntro from '@/components/ui/PageIntro';
+import Forms from '@/components/ui/Forms';
+import {gym} from '@/config/gym';
+export const metadata={title:'Contact'};
+export default function Contact(){return <div className="shell"><PageIntro label="CONTACT" title="START A CONVERSATION." text="Fictional business details. The enquiry form sends through Resend only when delivery configuration is supplied; it never reports an unconfigured submission as successful."/><section className="split section contact-grid"><div><h2>FIND THE VAULT.</h2><p>{gym.address}</p><a className="text-link" href={gym.maps} target="_blank" rel="noreferrer">Google Maps street search â†—</a><p><a href="tel:+919876512340">{gym.phone}</a></p><p><a href={'mailto:'+gym.email}>{gym.email}</a></p><p><a href="https://wa.me/919876512340" target="_blank" rel="noreferrer">WhatsApp fictional demo number â†—</a></p><h3>Opening hours</h3><p>{gym.hours}<br/>{gym.sunday}</p><p className="demo-note">The phone and WhatsApp number are fictional. Do not assume they connect to a gym. The .example email does not deliver.</p></div><Forms mode="contact"/></section></div>;}

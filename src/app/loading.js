@@ -1,0 +1,1 @@
+export default function Loading(){return <section className="shell loading-state" role="status"><span className="eyebrow">IRONVAULT</span><h1>Getting ready.</h1><div className="loading-bar"/><p>Loading your next stepâ€¦</p></section>;}

@@ -1,0 +1,1 @@
+export default function sitemap(){const base=process.env.AUTH_URL||'http://localhost:3000';return ['','about','facilities','trainers','memberships','gallery','contact','faq','privacy','terms'].map(p=>({url:base+'/'+p,changeFrequency:'monthly',priority:p?0.6:1}));}

@@ -1,0 +1,3 @@
+export function addMonths(date,months){const d=new Date(date);const day=d.getUTCDate();d.setUTCDate(1);d.setUTCMonth(d.getUTCMonth()+months);const last=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,0)).getUTCDate();d.setUTCDate(Math.min(day,last));return d;}
+export function membershipStatus(m,now=new Date()){if(m.state==='pending')return 'pending';if(new Date(m.end)<=now)return 'expired';if(m.suspended)return 'suspended';return new Date(m.start)>now?'queued':'active';}
+export function validCapture(p,record){return p.status==='captured'&&p.order_id===record.orderId&&p.amount===record.amount&&p.currency===record.currency&&typeof p.id==='string';}

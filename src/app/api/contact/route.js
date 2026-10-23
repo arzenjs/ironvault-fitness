@@ -1,0 +1,4 @@
+import {Resend} from 'resend';
+import {contact} from '@/lib/validation';
+import {endpoint,origin,body,rate,SafeError} from '@/lib/security';
+export const POST=endpoint(async req=>{origin(req);const data=contact.parse(await body(req));await rate('contact:'+data.email,3);if(!process.env.RESEND_API_KEY||!process.env.CONTACT_TO_EMAIL)throw new SafeError('Demo contact delivery is not configured',503);const result=await new Resend(process.env.RESEND_API_KEY).emails.send({from:process.env.RESEND_FROM_EMAIL,to:process.env.CONTACT_TO_EMAIL,replyTo:data.email,subject:'IronVault demo enquiry',text:`Name: ${data.name}\nEmail: ${data.email}\n\n${data.message}`});if(result.error)throw new SafeError('Message was not delivered. Try again.',503);return Response.json({ok:true,message:'Your enquiry was accepted by the email service.'});});
