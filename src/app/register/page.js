@@ -1,6 +1,30 @@
-import Link from 'next/link';
-import Forms from '@/components/ui/Forms';
-import PageIntro from '@/components/ui/PageIntro';
-import {getPlan} from '@/config/membership-plans';
-export const metadata={title:"Register"};
-export default async function AuthPage({searchParams}){const params=await searchParams;const plan=getPlan(params.plan)?.id||'';return <div className="shell auth-page"><PageIntro label="YOUR ACCOUNT" title="YOUR NEXT CHAPTER." text="Use a test account for this fictional portfolio. A selected membership is preserved through authentication."/><Forms mode="register" plan={plan}/><p><Link className="text-link" href={'/login?plan='+plan}>Already registered? Log in â†—</Link></p></div>;}
+import { redirect } from "next/navigation";
+import AuthShell from "@/components/auth/AuthShell";
+import RegisterForm from "@/components/auth/RegisterForm";
+import { getSessionUser } from "@/lib/session";
+import { safeNextPath } from "@/lib/redirects";
+import { media } from "@/config/media";
+
+export const metadata = {
+  title: "Create an account",
+  description: "Create an IronVault account to buy a membership and track your plan.",
+  robots: { index: false, follow: false },
+};
+
+export default async function RegisterPage({ searchParams }) {
+  const params = await searchParams;
+  const nextPath = safeNextPath(params?.next);
+  const user = await getSessionUser();
+
+  if (user) redirect(nextPath);
+
+  return (
+    <AuthShell
+      title="Create your account"
+      subtitle="One account for your membership, payment history and renewals. It takes under a minute."
+      sideImage={media.hero.athlete}
+    >
+      <RegisterForm nextPath={nextPath} />
+    </AuthShell>
+  );
+}

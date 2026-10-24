@@ -1,154 +1,537 @@
 # IronVault Fitness
 
-A JavaScript Next.js App Router portfolio demo: industrial editorial marketing pages, customer accounts, Razorpay test purchases, staff visibility and audited admin operations. IronVault is fictional. It supplies no real fitness services.
+A premium, animation-led gym website with a real membership purchase flow.
 
-## Verification status â€” read first
+> **Demo notice.** IronVault Fitness is a **fictional business** created for a portfolio project.
+> The address, phone number, prices, coaches, statistics and testimonials are illustrative sample content.
+> Payments run in **Razorpay test mode** only. Nothing here is legal, medical or financial advice.
 
-This project was generated without a working execution environment. **Dependency installation, Python generator execution, image downloads, lint, production build, browser tests, database transactions and external provider integration have NOT been run.** This is source for local validation, not a production-certified or acceptance-complete delivery. Do not enable real-money payments. Inspect generated source before running setup.
+---
 
-## Prerequisites and start
+## 1. Project overview
 
-Python 3.10+ generates the source; Node.js 22+ and npm run it. MongoDB Atlas or a local replica set is required for write transactions. A standalone MongoDB server is not supported.
+IronVault is a strength-first gym site built to show three things at once:
 
-1. Save the delivered text file as `bootstrap-ironvault.py`.
-2. Run `python3 bootstrap-ironvault.py`. It refuses to overwrite an existing project.
-3. Run `cd ironvault-fitness`.
-4. Run `npm run setup` to resolve stable compatible packages and install them.
-5. Run `npm run assets`, then visually review every downloaded photograph.
-6. Copy `.env.example` to `.env.local` and configure local secrets.
-7. Run `npm test`, `npm run lint`, `npm run build`, then `npm run dev`.
+1. **A distinctive visual identity** — dark industrial palette, condensed display type, editorial layouts and photography-led sections, instead of a generic gym template.
+2. **Motion as a system** — an art-directed hero, per-section motion concepts, route transitions, pointer-responsive cards, an accessible lightbox and a reduced-motion path.
+3. **A real, inspectable commerce backend** — Auth.js accounts, server-trusted pricing, Razorpay test-mode checkout, signed webhooks, idempotent activation, queued renewals, a customer dashboard, a staff lookup tool and an admin console.
 
-The setup script retrieves stable npm metadata at execution time, picks the highest stable Next.js/React versions permitted by stable next-auth peer requirements, pins versions and installs with strict peer checking. Auth.js v4 is used through `next-auth`: v5 beta is deliberately not installed. If the stable API moves to v5, setup stops for review rather than mixing incompatible APIs. Other packages resolve their stable latest versions. Strict installation can reject a newly published incompatible major; inspect and adjust only after reviewing its documentation. Commit package-lock.json after validation. Subsequent installs use `npm ci`, not setup.
+### Pages
 
-## Structure
+| Public | Account | Staff / Admin | API |
+| --- | --- | --- | --- |
+| `/` home | `/login` | `/staff` member lookup | `/api/auth/[...nextauth]` |
+| `/about` | `/register` | `/admin` operations | `/api/register` |
+| `/memberships` | `/checkout?plan=` | `/staff/accept-invite` | `/api/contact` |
+| `/facilities` | `/checkout/result?ref=` | | `/api/payments/create-order` |
+| `/trainers` | `/account` | | `/api/payments/verify` |
+| `/gallery` | | | `/api/payments/status` |
+| `/contact` | | | `/api/payments/abandon` |
+| `/faq` | | | `/api/webhooks/razorpay` |
+| `/privacy`, `/terms` | | | `/api/staff/reconcile` |
+| | | | `/api/admin/invitations` |
+| | | | `/api/admin/memberships` |
+| | | | `/api/admin/users` |
+| | | | `/api/invitations/accept` |
 
-`src/config` holds business details, plans, navigation and copy. `src/models/index.js` contains small Mongoose schemas in one readable file. `src/services` owns payment activation, calendar dates and invitations. `src/lib` holds authentication, provider setup, email, database connection and validation. Public pages are Server Components, with Client Components for forms, checkout, animations, gallery and dialogs. Scripts bootstrap the admin, download local assets and reconcile purchases.
+---
 
-## Environment
+## 2. Technology stack
 
-| Variable | Use |
-|---|---|
-| MONGODB_URI | MongoDB Atlas or replica-set connection string |
-| AUTH_SECRET | Strong random Auth.js session secret; generate with `openssl rand -base64 48` |
-| AUTH_URL | Exact app origin, localhost in development and HTTPS in staging |
-| RAZORPAY_KEY_ID | Test key beginning `rzp_test_`; live keys are rejected |
-| RAZORPAY_KEY_SECRET | Server order creation, fetch and checkout signature secret |
-| RAZORPAY_WEBHOOK_SECRET | Separate webhook HMAC secret |
-| RESEND_API_KEY | Server-side email API key |
-| RESEND_FROM_EMAIL | Approved sender; use verified domain for broader delivery |
-| CONTACT_TO_EMAIL | Actual deployment operatorâ€™s enquiry destination, not the fictional address |
-| ADMIN_EMAIL | Initial admin bootstrap only |
-| ADMIN_NAME | Initial admin bootstrap only |
-| ADMIN_PASSWORD | Initial admin bootstrap only; remove after bootstrap |
+| Layer | Choice | Version |
+| --- | --- | --- |
+| Framework | Next.js (App Router, React Server Components) | 16.4.3 |
+| UI | React | 19.3.1 |
+| Language | JavaScript (`.js`, no TypeScript) | — |
+| Styling | Tailwind CSS v4 (CSS-first `@theme` tokens) | 4.3.3 |
+| Icons | lucide-react | 1.61.0 |
+| Animation | `motion` (Framer Motion successor, `motion/react` API) | 14.6.0 |
+| Database | MongoDB + Mongoose | 8.24.6 |
+| Auth | Auth.js (NextAuth) v5, Credentials + JWT sessions | 5.0.0-beta.32 |
+| Payments | Razorpay Node SDK + hosted Checkout | 2.9.8 |
+| Email | Resend | 6.34.1 |
+| Validation | Zod | 4.6.7 |
+| Hash | bcryptjs | 3.0.3 |
 
-Auth.js v4 reads NEXTAUTH_URL internally; `lib/auth.js` sets it from AUTH_URL. AUTH_SECRET is passed explicitly. Do not duplicate differently configured origins. No payment secret is public. Checkout receives only the public Razorpay key and order data. Do not commit `.env.local`; do not send secrets in chat.
+**Compatibility notes**
 
-## MongoDB and initial admin
+- The newest stable Next.js is **16.4.3** rather than 15.x. Next 15.5 pins a `postcss` build with open advisories; Next 16 removes them (`npm audit` reports **0 vulnerabilities**). NextAuth v5 beta 32 declares `next: ^14 || ^15 || ^16` support, so the pairing is supported. Next 16 also moved `middleware.js` → `proxy.js`, which this repo uses.
+- `motion` is the actively maintained successor to `framer-motion` with the same `motion/react` import path, so migration later is trivial.
+- Tailwind v4 needs no `tailwind.config.js`; design tokens live in `src/styles/globals.css` under `@theme`.
 
-Use Atlas or start a local replica set and initiate it before running write workflows. Set indexes before accepting requests: the admin script invokes every modelâ€™s `init()`. Unique indexes protect emails, provider order IDs, captured payment IDs, membership payment IDs, invitation hashes, event IDs and email keys. TTL indexes clean rate-limit buckets; invitation expiry is checked explicitly, not delegated to TTL.
+---
 
-Set the three ADMIN variables locally. Run `npm run admin` once. It refuses if an admin already exists or the email belongs to another account. Remove the bootstrap password afterward. There is no public admin-creation route or public staff-registration route.
+## 3. Prerequisites
 
-Customer registration uses bcrypt at cost 12 and rejects passwords over 72 UTF-8 bytes. Auth.js uses JWT sessions. Every protected request looks up the current database account again, enforcing enabled state and current role. Deactivating staff therefore invalidates access even if a session cookie remains. Password reset, email verification, MFA and session management UI are not implemented; add them before real production use.
+- Node.js **20.9+** (developed on 20.20)
+- npm 10+
+- A MongoDB database (local `mongod`, Docker, or a free Atlas cluster)
+- Optional for payments: a Razorpay account in **test mode**
+- Optional for email: a Resend account with a verified sending domain
 
-## Payment lifecycle â€” actual implementation
+---
 
-1. Choose a plan. `/checkout?plan=quarterly` preserves the stable ID through login or registration.
-2. The authenticated customer calls the order endpoint. The server ignores browser amounts and loads `src/config/membership-plans.js`.
-3. A MongoDB transaction creates one pending Payment and its pending Membership. No access dates are assigned.
-4. Outside that transaction, Razorpay creates a test order. The receipt equals the MongoDB Payment ID. The returned order ID is persisted.
-5. Hosted Razorpay Checkout handles payment details. This application does not handle card fields.
-6. Checkoutâ€™s callback is sent to the server. HMAC-SHA256 validates `stored_order_id|payment_id` using the key secret and a timing-safe comparison.
-7. The signature alone does NOT grant access. The server fetches the Razorpay order and payment. Only a captured payment with matching order ID, amount and INR currency qualifies. The order receipt must also match the purchase ID.
-8. A signed raw-body webhook independently calls the same reconciliation function. Provider state is fetched again; webhook entity fields do not directly activate access.
-9. Inside a MongoDB transaction, the userâ€™s schedule version is incremented, the latest paid period is read, the pending Membership receives start/end timestamps, the Payment becomes successful and an email outbox record is written.
-10. Email delivery runs after commit. Email failure never reverses a captured payment or membership. A failed delivery remains pending for retry.
-11. The customer sees pending, successful, failed or abandoned provider-derived state in the account. A Check payment button repeats safe reconciliation.
+## 4. Installation and local development
 
-Pending also covers authorized-but-not-captured and delayed confirmation. Failed represents an order with only failed attempts; a later captured retry can still move it to successful. Abandoned is inferred after 24 hours with no authorized/captured payment, not from closing checkout. Neither failure nor abandonment prevents a later genuine capture from being recognized. Checkout dismissal does not change stored state.
+```bash
+cd ironvault
+npm install
+cp .env.example .env.local     # then fill in the values (section 5)
+npm run dev                    # http://localhost:3000
+```
 
-## Razorpay test setup and webhooks
+Other commands:
 
-Create test credentials in the Razorpay dashboard. Set test key ID and secret locally. Configure automatic capture appropriately in the provider dashboard: authorized payments intentionally remain pending until captured.
+```bash
+npm run build     # production build
+npm start         # serve the production build
+npm run lint      # ESLint (eslint-config-next, core-web-vitals)
+npm test          # unit + integration tests (see section 17)
+```
 
-Deploy a staging HTTPS instance or use a provider-permitted public tunnel. Configure the webhook URL as `https://YOUR-STAGING-HOST/api/webhooks/razorpay`. Select `payment.captured`, `payment.failed`, `payment.authorized` and `order.paid`. Use a distinct webhook secret and set the same value in server configuration. Localhost cannot receive webhooks directly. Current official documentation notes several common testing/tunnel domains are blocked; use staging or check current provider guidance rather than assuming ngrok works.
+---
 
-Webhook verification hashes the EXACT raw request text before parsing JSON. Never replace it with JSON.stringify of a parsed object. The webhook header is `x-razorpay-signature`. During secret rotation, old retries require their old secret; this implementation supports one configured secret only, so drain retries before rotation or add a controlled dual-secret validation window.
+## 5. Environment variables
 
-Unknown events are acknowledged and ignored. Invalid signatures are rejected. Known events without a linked order return a retryable service error. Completed event IDs from `x-razorpay-event-id` are acknowledged as duplicates. Event completion is recorded AFTER successful reconciliation, so an interrupted handler can be retried. Concurrent duplicate event upserts can return a duplicate-index error, but unique purchase activation and provider reconciliation prevent a second membership; provider retry then finds the completed event.
+`.env.example` is the source of truth; every variable below is actually read by the code.
 
-## Database consistency and recovery
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `MONGODB_URI` | yes | Mongo connection string. Without it, database-backed routes return a clear 503. |
+| `AUTH_SECRET` | yes | Signs the Auth.js JWT. Generate: `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` |
+| `AUTH_URL` | production | Canonical app URL. Optional on localhost. |
+| `AUTH_TRUST_HOST` | optional | `true` behind a proxy/Vercel when `AUTH_URL` is unset. |
+| `RAZORPAY_KEY_ID` | for payments | Publishable test key (`rzp_test_…`). Safe to expose; it is sent to the browser by an API response. |
+| `RAZORPAY_KEY_SECRET` | for payments | **Server only.** Signs/verifies checkout signatures. |
+| `RAZORPAY_WEBHOOK_SECRET` | for webhooks | **Server only.** Verifies webhook signatures. |
+| `RESEND_API_KEY` | for email | Leave empty to disable sending — the app logs a warning and continues. |
+| `RESEND_FROM_EMAIL` | for email | Must be a verified sender, e.g. `IronVault <memberships@yourdomain.com>`. |
+| `CONTACT_INBOX_EMAIL` | optional | Where contact-form notifications go (defaults to the gym email). |
+| `NEXT_PUBLIC_SITE_URL` | production | Used in metadata, sitemap and invitation links. |
+| `MONGODB_TEST_URI` | tests only | Enables the integration suite. |
 
-A Razorpay order/payment is an EXTERNAL provider operation. A MongoDB transaction protects only MongoDB writes. There is no distributed atomic transaction across them.
+**Never** commit `.env.local` (it is git-ignored). No secret is referenced from a client component — `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, `AUTH_SECRET` and `RESEND_API_KEY` are only read inside `src/lib/*` and `src/services/*`, which run on the server.
 
-MongoDB transactions require a replica set. Pending Payment and Membership creation is one transaction. Captured-payment processing, access dates, successful state and email-outbox insertion are another. Concurrent activations for the same customer both write that customerâ€™s scheduleVersion; a write conflict causes the MongoDB transaction helper to retry and calculate a fresh queue boundary.
+---
 
-If Razorpay creates an order but saving its ID fails, recovery searches provider orders using the purchase receipt and accepts only exactly one matching amount/currency/receipt. The purchase is not silently re-created. Unclear or missing matches remain pending for operator inspection. External order creation timeouts may leave an uncertain result; the recoverer must establish provider state before another order is created. The browser persists a UUID request key in sessionStorage per user/plan. A unique customer/request-key index prevents duplicate pending purchase creation. Retrying the same key reuses the stored order or attempts receipt-based recovery; it never silently creates another order for an unresolved existing purchase. A separate purchase requires a new key. Operators should still inspect existing pending attempts if browser storage is cleared.
+## 6. MongoDB configuration
 
-Run `npm run reconcile` in a trusted scheduler every few minutes. It scans unresolved purchases, fetches verified provider state, finishes activation and retries email outbox entries. Per-record errors report only purchase IDs, not secrets or payment payloads. A crash after activation but before event completion is harmless: the next callback/webhook sees processedAt and does not grant another period.
+**Local**
 
-Paid membership start is the later of server time or the end of the customerâ€™s latest paid period, including suspended periods. Suspension changes access, not already-paid validity. Calendar months use UTC and clamp month ends; dashboard displays India time. End timestamps are exclusive. Expired/queued/active states are derived when rendering, so no cron is required merely to label expiry. Admin restoration cannot activate pending/unpaid memberships or revive an expired period.
+```bash
+docker run -d --name ironvault-mongo -p 27017:27017 mongo:7
+# MONGODB_URI=mongodb://127.0.0.1:27017/ironvault
+```
 
-## Email and staff invitations
+**Atlas** — create a free cluster, add a database user, allow your IP, copy the SRV string into `MONGODB_URI`.
 
-Configure Resend and an approved sender. `onboarding@resend.dev` is a restricted testing sender; use a verified domain and permitted recipients for broader testing. Purchase confirmation includes dates and the captured payment reference. Invitations use random 256-bit tokens, store only SHA256 hashes, expire in 24 hours and are consumed in a transaction with staff creation. The email outbox must temporarily retain the invitation URL to deliver/retry it; restrict database access. Invite recipients must use the exact invited email. Existing-account promotion is intentionally not supported.
+Mongoose creates collections and indexes on first use. The important ones:
 
-Outbox keys are unique and are sent as Resend idempotency keys. A one-minute database lease limits concurrent sending. Provider idempotency retention is finite; exact-once email delivery is NOT guaranteed after long retry gaps or rare lease overlaps. Pending errors are visible in the admin outbox count. Contact enquiries are sent directly, with a real provider acceptance response rather than a fake success. Purchase and invitation confirmation templates are branded plain-text for simplicity.
+| Collection | Index | Why |
+| --- | --- | --- |
+| `users` | `email` unique | one account per address |
+| `payments` | `razorpayOrderId` unique + sparse | one local row per order |
+| `payments` | `razorpayPaymentId` unique + sparse | one local row per captured payment |
+| `memberships` | `paymentId` unique + sparse | **one membership per payment** (the idempotency guarantee) |
+| `invitations` | `tokenHash` unique | single-use staff invites |
 
-## Asset inventory and rights
+> Both unique fields are **left unset** rather than `null` until a value exists. A sparse unique index skips missing fields but still enforces uniqueness on explicit `null`s — defaulting them to `null` would allow only one unpaid payment ever. (This was caught by the integration tests and is why `tests/payments.integration.test.js` exists.)
 
-The six candidate photographs are downloaded to `public/images` by `npm run assets`. The downloader rejects HTTP errors, non-image responses and suspiciously small responses, and generates `public/images/inventory.json` with exact URLs, timestamps and byte counts. These assets have NOT been downloaded or visually verified in this delivery. Do not call the image requirement complete until you run the downloader and review each photograph in a production build.
+### Seeding and bootstrap
 
-| File | Candidate source ID | Intended use |
-|---|---|---|
-| hero.jpg | photo-1534438327276-14e5300c3a48 | Hero / gym atmosphere |
-| interior.jpg | photo-1571902943202-507ec2618e8f | About / facility environment |
-| strength.jpg | photo-1517836357463-d25dfeac3438 | Strength editorial |
-| cardio.jpg | photo-1538805060514-97d9cc17730c | Conditioning zone |
-| equipment.jpg | photo-1581009146145-b5ef050c2e1e | Training equipment |
-| functional.jpg | photo-1518611012118-696072aa579a | Movement showcase |
+```bash
+npm run seed-demo      # customer + staff + two memberships (dev only)
+npm run create-admin -- --email=you@example.com --name="Gym Owner"
+```
 
-Sources are candidate `images.unsplash.com` photos. Consult https://unsplash.com/license and the individual source-photo pages before deployment. Attribution is appreciated; record photographers/source pages after verifying each asset. Image-license permission does not necessarily cover identifiable people, trademarks, artworks or private property. Never imply stock subjects endorse the gym. The trainer pages explicitly use illustrative training photographs, not portraits of named coaches. Replace unsuitable photos with verified licensed assets. Photos are reused as previews of the same fictional zones, not invented as separate facility records.
+---
 
-Fonts are downloaded npm Fontsource assets and served locally; retain their bundled license files. The geometric SVG vault wordmark and favicon are original simple artwork. PNG app icons are generated by Next.js ImageResponse routes. Next Image handles responsive optimization of local photos; hero loads with priority, other images are lazy. Image errors show a visible, consistently styled fallback, not a hidden broken icon. A fallback does not substitute for asset verification.
+## 7. Initial admin creation
 
-## Testing and deployment checklist
+There is **no public endpoint** that can create an admin or staff account.
 
-| Check | Current result |
-|---|---|
-| Generator syntax and execution | Not run |
-| Stable dependency resolution / install | Not run |
-| Domain tests: prices, capture checks, signatures, month-end dates, status derivation | Written; not run |
-| ESLint | Not run |
-| Production build | Not run |
-| Assets HTTP download / visual review | Not run |
-| Mobile, keyboard, dialogs and gallery browser verification | Not run |
-| MongoDB transactions / concurrency / unique indexes | Not run |
-| Registration, credentials and role/ownership integration tests | Not run |
-| Razorpay signed callback / webhook / reconciliation | Not run; test credentials and public webhook required |
-| Resend confirmations and invitations | Not run; configured sender and credentials required |
+```bash
+npm run create-admin -- --email=owner@example.com --name="Gym Owner"
+```
 
-Run `npm test`, `npm run lint`, `npm run build`. Start the production build with `npm start`. Check every public route and image, logo and generated icons. Inspect browser console for hydration issues. Test widths 320, 375, 768, 1024 and 1440 px, long names/emails/references, reduced-motion mode, keyboard menu/lightbox/FAQ interaction and network failures. Native dialogs provide focus trapping and Escape behavior; verify focus returns to the trigger. Test contact with delivery disabled and enabled. Verify the exact enquiry destination before using real emails.
+- Loads `.env.local`, connects directly to MongoDB.
+- Reads the password from `CREATE_ADMIN_PASSWORD` if set, otherwise prompts with hidden input (so it never lands in shell history):
+  `CREATE_ADMIN_PASSWORD='something-strong1' npm run create-admin -- --email=…`
+- Refuses to touch an existing account unless you pass `--promote`, so it cannot silently take over a user.
+- Enforces at least 10 characters with a letter and a number.
 
-With a test replica-set database, exercise duplicate accounts, wrong passwords, logged-out routes, customer-to-staff/admin access denial, staff-to-admin denial, disabled staff sessions, expired/used invitations and cross-customer purchase IDs. All customer-owned reads filter on the authenticated user; reconciliation permits broader records only for currently authorized staff/admin. There is no customer endpoint accepting arbitrary member IDs.
+Sign in at `/login`, then open `/admin`.
 
-For payments, test success, failure, checkout dismissal, invalid callback HMAC, modified raw webhook body, wrong amount/currency/order, authorized without capture, duplicate and out-of-order events, delayed webhooks, simultaneous purchases, second queued membership and transaction interruption. Kill processing after provider order creation and before database activation, then run the worker. Confirm exactly one Membership per Payment and no active unpaid access. Confirm email failure leaves paid access intact and the outbox retries. These integration scenarios are required acceptance tests; the included domain suite alone does not prove them.
+---
 
-Deploy on a Node-capable Next.js host, configure HTTPS AUTH_URL and server secrets, use Atlas, verify indexes, run the build, and configure the test webhook and scheduled worker. Do not perform writes during build/page rendering. Configure provider-approved recipients and a monitored operator contact address. Check all downloaded assets after deployment.
+## 8. Authentication configuration
 
-## Before any real-money launch
+- **Auth.js v5** with a single **Credentials** provider (email + password) and **JWT sessions** (7 days). No adapter session collection is needed.
+- Passwords are hashed with **bcrypt, cost 12**; `passwordHash` is `select: false` so it never loads by accident.
+- `authorize()` validates with Zod, compares against a dummy hash for unknown emails (so timing does not reveal whether an account exists), and rejects `disabled` accounts.
+- Public registration (`/api/register`) **hard-codes `role: "customer"`**. Staff/admin accounts only come from invitations or the bootstrap script.
+- The JWT carries `id`, `role`, `status`. Because roles can change after a token is issued, **every privileged server action re-reads the user from MongoDB** (`requireRole` in `src/lib/security.js`). Disabling a staff account therefore takes effect immediately.
 
-This version deliberately rejects live Razorpay keys. Do not remove that restriction as the only production change. Complete independent security review and integration tests; implement refund/dispute handling, legally reviewed terms/privacy/refund policies, email verification/account recovery, monitoring, backup/restore and abuse protection. Add a Razorpay-aware Content Security Policy only after testing hosted checkout domains and frames; this scaffold has security headers but no CSP. Deploy a trusted edge/WAF rate limiter: the included MongoDB per-email/account buckets are not sufficient against distributed signup or enquiry abuse. Configure retention/deletion processes and minimize retained invitation/outbox content. Have the real gym verify offerings, address, photos and pricing. Never represent fictional testimonials as real reviews.
+### Authorisation layers
 
-## Known limitations
+1. `src/proxy.js` — redirects visitors with **no session cookie** away from `/account`, `/checkout`, `/staff`, `/admin`. Convenience only; it never makes role decisions.
+2. Page-level checks — `getSessionUser()` + role comparison (`/staff`, `/admin`), `redirect()` when signed out.
+3. API-level checks — `requireUser()` / `requireRole([...])` in every route handler. **This is the real boundary.**
 
-Not acceptance-complete until the unrun checks above pass. No browser preview was verified. Six candidate assets are supplied as download definitions rather than embedded verified image bytes. Trainer/profile previews reuse zone photography. Motion includes headline masks, parallax, native-dialog entrance, card response, route entrance and section transforms, but has not been profiled on mobile. No elaborate horizontal scroll sequence or custom cursor was added. Staff directory is capped at 100 matched accounts and omits accounts with no purchases; add pagination for a larger operation. Admin initial bootstrap should be run once in a controlled environment; concurrent bootstrap invocations are not a supported process. Email templates are plain-text rather than elaborate HTML. No refunds, MFA, password reset, email verification, recurring billing, attendance, class booking or health advice.
+Ownership is enforced by putting the user id in the *query*, never by filtering afterwards:
+`Payment.findOne({ _id: ref, userId: user.id })`. Changing an id in a URL returns 404, not someone else's data.
 
-## References
+---
 
-Official payment and licensing sources consulted 23 October 2026:
-- https://razorpay.com/docs/payments/payment-gateway/web-integration/standard/integration-steps/
-- https://razorpay.com/docs/webhooks/validate-test.md
-- https://unsplash.com/license
+## 9. Razorpay test-mode setup
 
-Package versions are not guessed in this document. `scripts/setup.mjs` resolves registry metadata when YOU run it and produces setup-report.json. Review its output and lockfile before deployment.
+1. Create an account at <https://dashboard.razorpay.com> and switch to **Test Mode**.
+2. **Settings → API Keys → Generate key**. Copy the Key ID (`rzp_test_…`) and Key Secret into `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET`.
+3. Test-mode payments need no real bank data. In Checkout use the test instruments (e.g. UPI success `success@razorpay`, or the test card `4111 1111 1111 1111` with any future expiry/CVV — Razorpay's docs list the current set).
+4. Restart the dev server after changing environment variables.
+
+Docs used: [Orders](https://razorpay.com/docs/api/orders/), [Payments](https://razorpay.com/docs/api/payments/), [Signature verification](https://razorpay.com/docs/payments/server-integration/nodejs/payment-gateway/build-integration/#verify-payment-signature), [Webhooks](https://razorpay.com/docs/webhooks/).
+
+---
+
+## 10. Configuring and testing webhooks
+
+The webhook is the **authoritative** confirmation signal. Without it the flow still works (the verify route calls Razorpay's API), but webhooks are what make delayed or closed-tab payments recoverable.
+
+**Local testing**
+
+```bash
+# terminal 1
+npm run dev
+# terminal 2 — expose localhost
+ngrok http 3000     # or: cloudflared tunnel --url http://localhost:3000
+```
+
+In **Dashboard → Settings → Webhooks → Add New Webhook**:
+
+- URL: `https://<your-tunnel>/api/webhooks/razorpay`
+- Secret: the value you put in `RAZORPAY_WEBHOOK_SECRET`
+- Active events: `payment.captured`, `payment.failed`, `order.paid`, `order.expired`
+
+Make a test payment, then check **Dashboard → Webhooks → (your endpoint) → Logs**. A delivery is successful when the endpoint replies `2xx`.
+
+There is also a **staff/admin "Reconcile"** button (`POST /api/staff/reconcile`) and a CLI job:
+
+```bash
+npm run reconcile              # dry run: list payments older than 60s that are not settled
+npm run reconcile -- --apply   # ask Razorpay and update each record
+```
+
+---
+
+## 11. How signature verification works
+
+Two different signatures, two different secrets.
+
+**A. Checkout callback** (`POST /api/payments/verify`)
+
+```
+expected = HMAC_SHA256(order_id + "|" + payment_id, RAZORPAY_KEY_SECRET)
+valid    = timingSafeEqual(expected, razorpay_signature)
+```
+
+Implemented in `verifyPaymentSignature()` (`src/lib/razorpay.js`) with `crypto.timingSafeEqual`.
+
+**B. Webhook** (`POST /api/webhooks/razorpay`)
+
+```
+expected = HMAC_SHA256(raw_request_body, RAZORPAY_WEBHOOK_SECRET)
+```
+
+The route reads the body with `await request.text()` — the **raw bytes** — because re-serialising JSON changes key order/spacing and breaks the HMAC. This is asserted by a unit test that shows a re-stringified body fails verification.
+
+**A valid signature is not the last word.** After the signature check the server also fetches the payment from Razorpay and requires:
+
+- `payment.order_id === payment.razorpayOrderId` (our record),
+- `payment.amount === payment.amountPaise` (from the plan config),
+- `payment.currency === "INR"`,
+- `payment.status` is `authorized` or `captured`.
+
+Any mismatch parks the payment in `review` — it never activates a membership.
+
+---
+
+## 12. How duplicate deliveries are handled
+
+Three layers of idempotency:
+
+1. **Webhook event id** — `x-razorpay-event-id` is stored in `payment.webhookEvents`. A replayed id returns `{ duplicate: true }` immediately.
+2. **Payment state** — if the record is already `successful`, any `payment.captured` / `order.paid` event short-circuits, and a **late `payment.failed` can never un-pay** a verified membership.
+3. **Database constraint** — `Membership.paymentId` is a unique index. Even if the verify route and the webhook run at the same instant, only one membership row can exist; the loser catches `E11000` and returns the existing row.
+
+`tests/payments.integration.test.js` proves this with a real MongoDB: same event twice, plus a second event id for the same payment, still yields exactly one membership.
+
+---
+
+## 13. Razorpay payment vs. a MongoDB transaction
+
+These are different things and must not be confused:
+
+- A **Razorpay order/payment** lives in Razorpay's system. It is created and captured over HTTPS, outside your database.
+- A **MongoDB transaction** can atomically change several documents in *your* database — and nothing else.
+
+You therefore **cannot** make "money captured at Razorpay" and "membership activated in MongoDB" one atomic operation. Any architecture claiming otherwise is either using an outbox/saga with the same failure modes, or is wrong. This project is explicit about the gap and makes it recoverable instead.
+
+The app also **does not use MongoDB multi-document transactions at all**, so it runs on a standalone `mongod` as well as an Atlas replica set — no `replica set` requirement to deploy.
+
+---
+
+## 14. Database consistency strategy
+
+**Ordering.** Always write the local record first, then talk to the provider:
+
+```
+Payment(status=created) → Razorpay order → Payment(status=pending, razorpayOrderId)
+   → capture → verify → Membership created → Payment(status=successful, membershipId)
+```
+
+**The one gap.** Between "membership created" and "payment marked successful" a crash would leave `payment.status = pending` with a membership that exists. That is safe and self-healing:
+
+- the webhook retry (Razorpay retries for ~24h) calls `activateMembershipForPayment` again,
+- it finds the existing membership (unique index), skips creation, and finishes the payment update,
+- if Razorpay's retries are exhausted, `npm run reconcile -- --apply` or the staff Reconcile button does the same.
+
+**Detecting incomplete work.** Anything left in `created` / `pending` / `review` older than a minute is visible in:
+`/staff` → "Payments needing reconciliation", `/admin` → "Needs reconciliation", and `npm run reconcile` (dry run).
+
+**The reverse gap** (payment says successful, membership missing) is impossible by ordering, but is still covered: `serialisePayment` uses `payment.membershipId`, and every dashboard reads memberships directly.
+
+**What is *not* claimed:** payment and activation are **not atomic** across Razorpay and MongoDB. They are *eventually consistent*, with idempotent, retryable convergence in one direction (never activate on unverified data) and explicit reconciliation in the other.
+
+---
+
+## 15. Membership activation, expiry and queued plans
+
+**Activation** — only in `activateMembershipForPayment()`, only after verification (signature + provider state, or a signed webhook). A browser redirect alone never activates.
+
+**Duration** — calendar months with day clamping (`src/lib/dates.js`):
+
+| Start | Plan | Ends |
+| --- | --- | --- |
+| 31 Jan | 1 month | 28 Feb (29 Feb in a leap year) |
+| 31 Aug | 3 months | 30 Nov |
+| 29 Feb 2024 | 12 months | 28 Feb 2025 |
+
+Plain `setMonth()` would overflow 31 Jan into 3 March and silently give extra days.
+
+**Queued renewals** — if the customer already has time left (active, not suspended, `endDate > now`), the new plan starts exactly when the latest paid period ends:
+
+```
+newStart = max(end of all still-valid memberships, now)
+newEnd   = addMonthsClamped(newStart, durationMonths)
+```
+
+So buying an annual plan while a monthly one is active keeps the monthly days, marks the annual row `queued`, and shows both in `/account`. Paid time is never shortened.
+
+**Expiry** — `status` is a cache. Every view derives the real state from the dates (`deriveMembershipState`), so an expired membership can never look active just because a job did not run. `suspended` (set by an admin, with a reason) always wins.
+
+---
+
+## 16. Resend setup and email testing
+
+1. Create a Resend account, add and verify your sending domain (DNS records).
+2. Create an API key → `RESEND_API_KEY`; set `RESEND_FROM_EMAIL` (must be on the verified domain).
+3. Restart. Emails sent: **welcome**, **membership confirmed** (plan, amount, start/end dates, payment reference), **staff invitation**, **contact-form notification**.
+
+**Email must never fail a payment.** Sending happens *after* activation, inside a `try/catch`; a failure is logged and stored in `payment.emailError` while `payment.emailSentAt` stays empty — both are visible for follow-up. With Resend unset, the app logs `[email] skipped …` and continues normally.
+
+In test mode, Resend only delivers to the address that owns the account unless you verify a domain. Use Resend's test address or your own inbox; the console output tells you whether delivery was attempted or skipped.
+
+---
+
+## 17. Linting, build and testing commands
+
+```bash
+npm run lint                   # ESLint — clean
+npm run build                  # production build — clean
+npm test                       # 37 tests (22 unit + 15 integration when a DB is provided)
+MONGODB_TEST_URI=mongodb://127.0.0.1:27017/ironvault_test npm test
+```
+
+What the suite covers:
+
+| File | Covers |
+| --- | --- |
+| `tests/dates.test.js` | month-end clamping, leap years, year boundaries, queued start dates |
+| `tests/security.test.js` | checkout HMAC, webhook raw-body HMAC, token hashing, open-redirect protection, rate limiter |
+| `tests/validation.test.js` | plan config as the price source, client amount stripping, password/contact/admin rules |
+| `tests/membership-status.test.js` | derived active/queued/expired/suspended states |
+| `tests/payments.integration.test.js` | webhook signature rejection, activation, duplicate delivery, amount/currency mismatch, failed-then-success ordering, queued second purchase, concurrent activation, provider validation |
+
+`tests/register-loader.mjs` is a small resolver hook so `node --test` understands the `@/` alias and extensionless imports — no test framework or build step is added to the app.
+
+---
+
+## 18. Deployment
+
+1. Push the repo (`.env.local` is ignored).
+2. Create a project on Vercel (or any Node host) and set the environment variables from section 5. Set `NEXT_PUBLIC_SITE_URL` and `AUTH_URL` to the deployed origin.
+3. Point `MONGODB_URI` at Atlas and allow the host's egress IPs (or `0.0.0.0/0` for a demo).
+4. Add the production webhook URL in Razorpay pointing at `https://your-domain/api/webhooks/razorpay`.
+5. Run `npm run create-admin -- --email=…` against the production database **locally** (it uses your `.env.local`); the invite flow creates everyone else.
+6. After deploying, open `/`, `/gallery` and `/memberships` in a private window and confirm images, fonts and the lightbox.
+7. `next/image` optimises from `/public` at runtime; on a non-Vercel host keep `sharp` available (Next installs it automatically for standalone builds).
+
+---
+
+## 19. What must change before real-money payments
+
+This app is deliberately **test-mode only**. Before charging real money:
+
+1. Swap the Razorpay keys for **live** keys and set a **live** webhook with its own secret. Never reuse the test webhook secret.
+2. Create the production webhook endpoint **before** going live; test it with a ₹1 live payment.
+3. Serve over HTTPS only and add a strict Content-Security-Policy (Checkout needs `checkout.razorpay.com` in `script-src`/`frame-src`).
+4. Replace the in-memory rate limiter with a shared store (Upstash Redis, etc.) — see limitations below.
+5. Decide the business rules this demo leaves open: refunds, cancellations, transfers, tax/GST invoicing, and a real accounting export of successful payments.
+6. Add monitoring/alerting on `payment.status = review`, on webhook non-2xx responses, and on `emailError`.
+7. Run a written reconciliation at least daily (`npm run reconcile`) until you trust the webhook pipeline.
+8. Get the terms, privacy policy and refund policy legally reviewed — the versions here are demo text.
+9. Consider Razorpay's **route/marketplace** or payment-links if you add multiple branches; not needed for a single location.
+
+---
+
+## 20. Known limitations and unverified behaviour
+
+**Verified in this repo** (commands actually run): `npm run lint`, `npm run build`, `npm test` (37/37 with a MongoDB instance), Playwright checks at 360/390/768/1024/1440/1920 px for horizontal overflow, all public pages returning 200 with no broken images, registration → login → account, duplicate registration (409), weak password (422), logged-out redirects, customer blocked from `/staff` and `/admin`, contact-form submission, gallery lightbox with Escape, and a signed webhook activating a membership end-to-end against the running app.
+
+**Not verifiable without your credentials**
+
+- A **real Razorpay checkout popup** and a real captured test payment: this environment has placeholder keys, so order creation returns `Authentication failed` (handled as a friendly error). The webhook path was verified by signing payloads with the configured secret.
+- **Resend delivery**: no API key, so emails are skipped (by design) and only logged.
+- **Google Maps iframe**: the embed is loaded from `google.com`; it renders in a normal browser but is blocked in restricted sandboxes.
+
+**Deliberate limitations**
+
+- **No recurring billing**, refunds, pause/transfer, class booking, workout tracking or trainer booking — out of scope (section 22 of the brief).
+- **Rate limiting is per-instance** (`Map` in `src/lib/security.js`). Multi-instance deployments should move it to a shared store.
+- `loading.js` exists for `/account` and `/staff` (both wait on the database and use layout-matched skeletons). Static marketing pages render instantly, so a skeleton there would only add noise.
+- Speculative checkouts are not cleaned up automatically; `npm run reconcile` closes them as `abandoned` once Razorpay says there is no captured payment.
+- Photos are generated or Unsplash stock imagery representing a fictional gym; the coach portraits are unrelated models.
+- Because Next 16 removed some class-name heuristics, `src/proxy.js` (not `middleware.js`) is used for the cookie guard.
+
+---
+
+## 21. Payment lifecycle, step by step
+
+**"Join Now" → an active membership.**
+
+1. **Choose a plan** (`/memberships`). The browser knows only `planId`.
+2. **Not signed in?** The CTA sends you to `/login?next=/checkout?plan=vault-quarterly`; registration carries the same `next`, so the plan survives authentication.
+3. **`/checkout` (server)** re-reads the plan from `src/config/membership-plans.js`. An unknown id renders "Choose a plan first" — the URL cannot set a price.
+4. **Click Pay.**
+5. **`POST /api/payments/create-order`** (authenticated):
+   - stores `Payment { status: "created" }` with the plan's price in paise and its duration,
+   - creates the Razorpay order with `amount` from config and `currency: "INR"`,
+   - saves `razorpayOrderId` and flips the row to `pending`,
+   - returns only `keyId`, `orderId`, `amount`, `currency` and prefill data to the browser.
+6. **Razorpay Checkout opens** (hosted iframe). Card/UPI details never touch this app or its server.
+7. **On success** Checkout returns `razorpay_order_id`, `razorpay_payment_id`, `razorpay_signature`.
+8. **`POST /api/payments/verify`**:
+   - loads the payment **by id *and* user id** (ownership),
+   - rejects if the order does not match,
+   - verifies the HMAC signature,
+   - fetches the payment from Razorpay and checks order, amount, currency, status,
+   - calls `activateMembershipForPayment()` → `Membership` created (`active`, or `queued` if time remains),
+   - marks the payment `successful`, stores `membershipId` and `verifiedAt`,
+   - sends the confirmation email (best-effort).
+9. **`/checkout/result?ref=…`** shows the real state and keeps polling `/api/payments/status` for ~60 s, so a slow webhook resolves without a manual refresh.
+10. **Webhook** (`payment.captured`) arrives independently, passes the raw-body HMAC, and runs the same activation — idempotently. If the browser tab died in step 7, **this is what activates the membership.** If the customer closed the modal, the attempt is marked `abandoned`, but a late capture still activates it.
+11. **`/account`** lists the membership, its dates, days remaining, queued plan and every payment attempt with its Razorpay reference.
+
+Failure branches: bad signature → `review`; amount/currency mismatch → `review`; `payment.failed` → `failed` (never activates); closed window → `abandoned`; anything stale → reconcile.
+
+---
+
+## 22. Source map
+
+```text
+src/
+  app/                     routes (RSC by default; client only where interactive)
+    api/                   route handlers (server-only)
+    account/ checkout/ staff/ admin/ …   pages
+    layout.js template.js error.js not-found.js loading.js
+  components/
+    layout/  ui/  home/  memberships/  gallery/  account/  dashboard/  auth/  contact/
+  config/
+    gym.js                 business identity, hours, map links
+    membership-plans.js    THE price/duration source of truth
+    navigation.js  media.js  facilities.js  trainers.js  faq.js  testimonials.js
+  lib/
+    db.js auth.js razorpay.js email.js validation.js security.js
+    dates.js membership-status.js format.js redirects.js session.js motion.js fonts.js
+  models/                  User, Membership, Payment, Invitation, AuditLog, ContactMessage
+  services/
+    memberships.js         activation, derived state, suspension + audit
+    payments.js            order → verify → webhook → reconcile
+    invitations.js         hashed single-use staff invites
+    staff.js               member search
+  styles/globals.css       design tokens + shared component classes
+  proxy.js                 cookie-level route guard
+scripts/
+  create-admin.js  seed-demo.js  reconcile-payments.js
+public/images/             downloaded, optimised photography (see below)
+tests/                     node:test suites + @/ resolver hook
+```
+
+---
+
+## 23. Asset inventory
+
+All photography is **downloaded into `public/images/`** (nothing is hot-linked) and served through `next/image`, so `public/images` is the only source and every extra size is generated at request time.
+
+### Licence
+
+- **Unsplash photos** — [Unsplash License](https://unsplash.com/license): free for commercial and non-commercial use, no attribution required (credit appreciated). They are used here to represent a fictional business and do not depict its staff or members.
+- **Generated images** (`facilities/locker-room.jpg`, `site/gym-exterior.jpg`, `site/og-cover.jpg`) — AI-generated for this project specifically; no third-party rights involved. The OG cover composites a licensed Unsplash photo with the IronVault wordmark.
+- **Logo, favicon, icons** — original SVG created for this project (`public/favicon.svg`, `src/app/icon.svg`, `src/app/apple-icon.png`, `src/components/ui/Logo.js`).
+
+### Inventory
+
+| File | Used in | Unsplash ID |
+| --- | --- | --- |
+| `hero/hero-athlete.jpg` | home hero | `photo-1581009146145-b5ef050c2e1e` |
+| `hero/hero-dumbbell-aisle.jpg` | home hero back panel | `photo-1534438327276-14e5300c3a48` |
+| `hero/hero-rope.jpg` | spare hero art | `photo-1605296867304-46d5465a13f1` |
+| `about/barbell-back.jpg` | about hero, login panel | `photo-1526506118085-60ce8714f8c5` |
+| `about/group-training.jpg` | philosophy, trainers hero | `photo-1567013127542-490d757e51fc` |
+| `about/group-class.jpg` | philosophy inset, about | `photo-1518611012118-696072aa579a` |
+| `about/floor-stretch.jpg` | about story | `photo-1593079831268-3381b0db4a77` |
+| `facilities/strength-rack.jpg` | facilities (02/01) | `photo-1574680096145-d05b474e2155` |
+| `facilities/resistance-dumbbells.jpg` | facilities (02) | `photo-1583454110551-21f2fa2afe61` |
+| `facilities/cardio-floor.jpg` | facilities (03) | `photo-1540497077202-7c8a3999166f` |
+| `facilities/functional-turf.jpg` | facilities (04) | `photo-1591258370814-01609b341790` |
+| `facilities/locker-room.jpg` | facilities (05) | generated |
+| `trainers/trainer-01…04.jpg` | coaches | `photo-1571731956672-f2b94d7dd0cb`, `photo-1549476464-37392f717541`, `photo-1550345332-09e3ac987658`, `photo-1530822847156-5df684ec5ee1` |
+| `gallery/gallery-01…14.jpg` | gallery + home strip | `1611672585731-fa10603fb9e0`, `1521805103424-d8f8430e8933`, `1526401485004-46910ecc8e51`, `1541534741688-6078c6bfb5c5`, `1548690312-e3b507d8c110`, `1552196563-55cd4e45efb3`, `1534258936925-c58bed479fcb`, `1584466977773-e625c37cdd50`, `1594381898411-846e7d193883`, `1554284126-aa88f22d8b74`, `1571019613454-1cb2f99b2d8b`, `1638536532686-d610adfc8e5c`, `1599058917765-a780eda07a3e`, `1517838277536-f5f99be501cd` |
+| `site/training-cta.jpg` | final CTA, auth panel, gallery hero | `photo-1616803689943-5601631c7fec` |
+| `site/community.jpg` | about | `photo-1552674605-db6ffd4facb5` |
+| `site/gym-exterior.jpg` | contact hero, location band | generated |
+| `site/og-cover.jpg` | social preview (1200×630) | composite |
+
+Reproduce a source file with:
+`https://images.unsplash.com/<ID>?auto=format&fit=crop&w=1200&q=80`
+
+### Image handling
+
+- Fixed intrinsic `width`/`height` on every `SmartImage`, with `fill` + `sizes` for responsive crops (no layout shift).
+- `priority` only on the hero and auth-side images; everything below the fold is lazy by default.
+- `SmartImage` renders a branded fallback panel (vault mark + "Image unavailable") if a file ever fails to decode, instead of a broken-image icon.
+- Alt text is descriptive for informative images and empty for decorative ones (`alt=""` on backdrops and the final CTA overlay).
+- Descriptive filenames, grouped by purpose (`hero/`, `facilities/`, `trainers/`, `gallery/`, `about/`, `site/`).
+
+---
+
+## 24. Design and motion notes (for future edits)
+
+- **Tokens** live in `src/styles/globals.css` (`@theme`): `ink`, `coal`, `steel`, `graphite`, `fog`, `ash`, `signal`, `ember`, plus `--font-display` (Anton), `--font-sans` (Inter), `--font-mono` (JetBrains Mono) loaded through `next/font`.
+- **Section rhythm** uses `.section`, `.shell` and `.shell-tight`; type uses `.display` / `.display-tight`, `.eyebrow`, `.lede`.
+- **Motion** primitives: `Reveal`, `RevealImage`, `SplitText`, `StatCounter`, `Accordion`, `Marquee` in `src/components/ui`. Shared easings/variants in `src/lib/motion.js`.
+- Only `transform`/`opacity` animate. Card tilt and spotlight use CSS variables written on `pointermove` (no React re-render).
+- `prefers-reduced-motion` is honoured: a global CSS override plus component-level `useReducedMotion` checks that swap to static markup, so nothing can be left invisible.
+- A `<noscript>` rule un-hides `[data-reveal]` elements if JavaScript never runs.
+- Performance guardrails kept deliberate: no full-page blur, no scroll-jacking, no intro loader, images sized per breakpoint, animation confined to the viewport.

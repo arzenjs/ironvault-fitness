@@ -1,4 +1,56 @@
-import PageIntro from '@/components/ui/PageIntro';
-import Gallery from '@/components/gallery/Gallery';
-export const metadata={title:'Gallery'};
-export default function GalleryPage(){return <div className="shell"><PageIntro label="VISUAL JOURNAL" title="INSIDE THE EFFORT." text="Training photography used to illustrate the fictional IronVault atmosphere. Use category filters, then open a photo. Arrow keys navigate the lightbox; Escape closes it."/><Gallery/><p className="demo-note">Illustrative stock photography, not photographs of a real IronVault facility.</p></div>;}
+import Link from "next/link";
+import { ArrowUpRight, Keyboard } from "lucide-react";
+import PageHero from "@/components/layout/PageHero";
+import GalleryGrid from "@/components/gallery/GalleryGrid";
+import { media } from "@/config/media";
+
+export const metadata = {
+  title: "Gallery",
+  description:
+    "Photographs of strength training, conditioning, coaching and the IronVault floor. All images are locally hosted and optimised.",
+  alternates: { canonical: "/gallery" },
+};
+
+export default function GalleryPage() {
+  return (
+    <>
+      <PageHero
+        eyebrow="Gallery"
+        title={
+          <>
+            The floor,
+            <br />
+            <span className="text-signal">unedited.</span>
+          </>
+        }
+        lede="Training photographs from the demo's stock library. Filter by category, then open any image for a larger view."
+        meta={["14 photographs", "Filterable", "Keyboard accessible"]}
+        image={media.training.cta}
+      />
+
+      <section className="pb-20">
+        <div className="shell">
+          <GalleryGrid />
+
+          <div className="mt-8 flex flex-col items-start justify-between gap-4 rounded-xl border border-white/10 bg-coal px-4 py-3 sm:flex-row sm:items-center">
+            <p className="inline-flex items-center gap-2 text-xs text-ash">
+              <Keyboard size={14} className="text-signal" aria-hidden="true" />
+              Keyboard: Tab to a photo, Enter to open, arrows to browse, Esc to close.
+            </p>
+            <Link
+              href="/memberships"
+              className="inline-flex items-center gap-1 text-xs font-medium text-fog hover:text-signal"
+            >
+              Train here <ArrowUpRight size={12} aria-hidden="true" />
+            </Link>
+          </div>
+
+          <p className="mt-6 text-[0.6875rem] leading-relaxed text-ash/60">
+            Photography is licensed stock imagery used to represent a fictional gym. It does not depict
+            IronVault members or staff.
+          </p>
+        </div>
+      </section>
+    </>
+  );
+}

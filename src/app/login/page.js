@@ -1,6 +1,31 @@
-import Link from 'next/link';
-import Forms from '@/components/ui/Forms';
-import PageIntro from '@/components/ui/PageIntro';
-import {getPlan} from '@/config/membership-plans';
-export const metadata={title:"Login"};
-export default async function AuthPage({searchParams}){const params=await searchParams;const plan=getPlan(params.plan)?.id||'';return <div className="shell auth-page"><PageIntro label="YOUR ACCOUNT" title="WELCOME BACK." text="Use a test account for this fictional portfolio. A selected membership is preserved through authentication."/><Forms mode="login" plan={plan}/><p><Link className="text-link" href={'/register?plan='+plan}>Create an account â†—</Link></p></div>;}
+import { redirect } from "next/navigation";
+import AuthShell from "@/components/auth/AuthShell";
+import LoginForm from "@/components/auth/LoginForm";
+import { getSessionUser } from "@/lib/session";
+import { safeNextPath } from "@/lib/redirects";
+import { media } from "@/config/media";
+
+export const metadata = {
+  title: "Log in",
+  description: "Sign in to view your IronVault membership, plan dates and payment history.",
+  robots: { index: false, follow: false },
+};
+
+export default async function LoginPage({ searchParams }) {
+  const params = await searchParams;
+  const nextPath = safeNextPath(params?.next);
+  const user = await getSessionUser();
+
+  // Already signed in → continue to the intended destination.
+  if (user) redirect(nextPath);
+
+  return (
+    <AuthShell
+      title="Welcome back"
+      subtitle="Sign in to see your membership dates, payment history and renewal options."
+      sideImage={media.about.barbell}
+    >
+      <LoginForm nextPath={nextPath} />
+    </AuthShell>
+  );
+}

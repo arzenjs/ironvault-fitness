@@ -1,1 +1,32 @@
-export const navigation=[['About','/about'],['Facilities','/facilities'],['Trainers','/trainers'],['Memberships','/memberships'],['Gallery','/gallery'],['FAQ','/faq'],['Contact','/contact']];
+/** Primary navigation. `href` values are the real routes in the app. */
+export const mainNav = [
+  { href: "/memberships", label: "Memberships" },
+  { href: "/facilities", label: "Facilities" },
+  { href: "/trainers", label: "Coaches" },
+  { href: "/gallery", label: "Gallery" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+];
+
+export const footerNav = {
+  train: [
+    { href: "/memberships", label: "Membership plans" },
+    { href: "/facilities", label: "Facilities" },
+    { href: "/trainers", label: "Coaches" },
+    { href: "/gallery", label: "Gallery" },
+  ],
+  gym: [
+    { href: "/about", label: "About IronVault" },
+    { href: "/contact", label: "Visit & contact" },
+    { href: "/faq", label: "FAQ" },
+  ],
+  legal: [
+    { href: "/privacy", label: "Privacy policy" },
+    { href: "/terms", label: "Terms of service" },
+  ],
+};
+
+export const accountNav = [
+  { href: "/account", label: "Overview" },
+  { href: "/memberships", label: "Buy a plan" },
+];

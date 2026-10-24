@@ -1,6 +1,32 @@
+# dependencies
 node_modules/
-.next/
-.env*
-.env.example
+.pnp
+.pnp.*
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# production
+/build
+/dist
+
+# environment files — never commit real secrets
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# misc
+.DS_Store
+*.pem
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.vercel
+*.tsbuildinfo
 coverage/
-setup-report.json
+/tmp

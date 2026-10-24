@@ -3,39 +3,36 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "engines": {
-    "node": ">=22"
-  },
+  "description": "IronVault Fitness — premium gym marketing site with membership checkout (portfolio demo).",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "node --test tests/*.test.js",
-    "setup": "node scripts/setup.mjs",
-    "assets": "node scripts/assets.mjs",
-    "admin": "node --env-file=.env.local scripts/create-admin.js",
-    "reconcile": "node --env-file=.env.local scripts/reconcile.js"
+    "test": "node --import ./tests/register-loader.mjs --test tests/",
+    "create-admin": "node --env-file=.env.local scripts/create-admin.js",
+    "seed-demo": "node --env-file=.env.local scripts/seed-demo.js",
+    "reconcile": "node --env-file=.env.local scripts/reconcile-payments.js"
   },
   "dependencies": {
+    "bcryptjs": "3.0.3",
+    "lucide-react": "1.61.0",
+    "mongoose": "8.24.6",
+    "motion": "14.6.0",
     "next": "16.4.3",
+    "next-auth": "5.0.0-beta.32",
+    "razorpay": "2.9.8",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "next-auth": "4.24.15",
-    "mongoose": "9.11.3",
-    "razorpay": "2.9.8",
     "resend": "6.34.1",
-    "lucide-react": "1.61.0",
-    "motion": "14.6.0",
-    "bcryptjs": "3.0.3",
-    "zod": "4.6.7",
-    "@fontsource/bebas-neue": "5.3.0",
-    "@fontsource/inter": "5.3.0"
+    "zod": "4.6.7"
   },
   "devDependencies": {
-    "tailwindcss": "4.3.3",
     "@tailwindcss/postcss": "4.3.3",
+    "eslint": "9.39.1",
     "eslint-config-next": "16.4.3",
-    "eslint": "10.13.0"
+    "globals": "16.5.0",
+    "postcss": "^8.5.31",
+    "tailwindcss": "4.3.3"
   }
 }
