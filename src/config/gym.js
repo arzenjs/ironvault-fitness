@@ -1,21 +1,3 @@
-/**
- * Single source of truth for gym identity and contact details.
- *
- * Business email addresses (two separate purposes — never interchange them):
- *
- *   contactEmail      Customer-facing address. Shown on the site (footer, contact page,
- *                     privacy policy), receives contact-form notifications (unless
- *                     CONTACT_INBOX_EMAIL overrides it) and is the reply-to on customer
- *                     emails such as welcome and membership confirmations.
- *
- *   staffInviteEmail  Staff/admin address for invitation workflows. It is the reply-to on
- *                     staff and administrator invitation emails, so questions from invitees
- *                     reach the team and never the public front-desk inbox. It is not shown
- *                     publicly. STAFF_INVITE_EMAIL overrides it on the server.
- *
- * Neither is the Resend sender identity — that is RESEND_FROM_EMAIL (see src/lib/email.js).
- * Replace the placeholder addresses with real mailboxes before launch.
- */
 export const gym = {
   name: "IronVault Fitness",
   shortName: "IronVault",
@@ -32,8 +14,8 @@ export const gym = {
   phone: "+91 98765 12340",
   phoneHref: "tel:+919876512340",
   whatsapp: "919876512340",
-  contactEmail: "hello@ironvault.example",
-  staffInviteEmail: "team@ironvault.example",
+  contactEmail: process.env.CONTACT_INFO_EMAIL || "contact@ironvault.example",
+  staffInviteEmail: process.env.STAFF_INVITE_EMAIL || "team@ironvault.example",
   mapsQuery: "Fraser Road, Patna, Bihar, India",
   currency: "INR",
   hours: [
