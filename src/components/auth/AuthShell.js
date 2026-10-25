@@ -2,7 +2,6 @@ import Link from "next/link";
 import SmartImage from "@/components/ui/SmartImage";
 import { VaultMark } from "@/components/ui/Logo";
 import { media } from "@/config/media";
-import { gym } from "@/config/gym";
 
 /** Two-column auth layout: form on the left, brand panel on the right. */
 export default function AuthShell({ title, subtitle, children, footer, sideImage = media.training.cta }) {
@@ -24,9 +23,6 @@ export default function AuthShell({ title, subtitle, children, footer, sideImage
 
           {footer ? <div className="mt-6 text-sm text-ash">{footer}</div> : null}
 
-          <p className="mt-10 text-[0.6875rem] leading-relaxed text-ash/60">
-            Demo application · {gym.name} is fictional. Payments run in Razorpay test mode only.
-          </p>
         </div>
       </div>
 

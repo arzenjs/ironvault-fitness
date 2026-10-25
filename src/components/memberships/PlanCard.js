@@ -52,13 +52,16 @@ export default function PlanCard({ plan, index = 0, compact = false }) {
         }}
       />
 
-      {plan.recommended ? (
-        <span className="absolute right-5 top-5 inline-flex items-center gap-1.5 rounded-full bg-signal px-2.5 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.16em] text-white">
-          <Sparkles size={11} aria-hidden="true" /> Most picked
-        </span>
-      ) : null}
-
       <div className="relative">
+        {/* Fixed-height slot: the badge sits in the flow (so it can never collide with the
+            plan label on narrow cards) and every card keeps the same vertical rhythm. */}
+        <div className="mb-4 flex h-6 items-center">
+          {plan.recommended ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-signal px-2.5 py-1 font-mono text-[0.5625rem] uppercase tracking-[0.16em] text-white">
+              <Sparkles size={11} aria-hidden="true" /> Most picked
+            </span>
+          ) : null}
+        </div>
         <p className="eyebrow">{formatPlanDuration(plan.durationMonths)} access</p>
         <h3 className="display mt-2 text-[1.75rem] leading-none">{plan.name}</h3>
 

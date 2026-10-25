@@ -74,8 +74,8 @@ export default function LocationBand() {
                 <Mail size={12} className="text-signal" aria-hidden="true" /> Email
               </dt>
               <dd className="mt-2 break-all">
-                <a href={`mailto:${gym.email}`} className="text-sm text-fog/90 hover:text-fog">
-                  {gym.email}
+                <a href={`mailto:${gym.contactEmail}`} className="text-sm text-fog/90 hover:text-fog">
+                  {gym.contactEmail}
                 </a>
               </dd>
             </div>

@@ -10,7 +10,7 @@ import { media } from "@/config/media";
 export const metadata = {
   title: "Coaching team",
   description:
-    "Meet the fictional IronVault coaching team and the assessment-first approach behind every training block. Demo profiles for a portfolio project.",
+    "Meet the IronVault coaching team and the assessment-first approach behind every training block.",
   alternates: { canonical: "/trainers" },
 };
 
@@ -26,8 +26,8 @@ export default function TrainersPage() {
             <span className="text-signal">supervised.</span>
           </>
         }
-        lede="Four fictional coaches written for this demo. On a real floor this page would introduce the people who own your programming — here it demonstrates how profiles, specialisations and availability are presented."
-        meta={["4 demo profiles", "Assessment included", "No booking system in this demo"]}
+        lede="Meet the people who own your programming: their specialisations, experience and floor availability, so you can ask for the right coach."
+        meta={["4 coaches", "Assessment included", "Book through the front desk"]}
         image={media.about.group}
       >
         <Link href="/contact" className="btn btn-primary">
@@ -47,11 +47,8 @@ export default function TrainersPage() {
                       alt={trainer.image.alt}
                       sizes="(max-width: 640px) 90vw, 150px"
                       className="aspect-[4/5] w-full sm:h-full"
-                      imgClassName="object-cover transition-transform duration-700 group-hover:scale-105"
+                      imgClassName="object-cover object-top transition-transform duration-700 group-hover:scale-105"
                     />
-                    <span className="absolute left-2 top-2 rounded-full bg-ink/70 px-2 py-0.5 font-mono text-[0.5rem] uppercase tracking-[0.12em] text-fog/80 backdrop-blur">
-                      {trainer.credential}
-                    </span>
                   </div>
 
                   <div className="flex flex-col">
@@ -80,11 +77,6 @@ export default function TrainersPage() {
             ))}
           </div>
 
-          <p className="mt-6 rounded-xl border border-white/10 bg-ink px-4 py-3 text-xs leading-relaxed text-ash">
-            <span className="text-fog">Demo notice:</span> names, biographies, experience and portraits are
-            fictional/sample content. Portraits are licensed stock fitness photography of unrelated models and
-            do not depict the named individuals.
-          </p>
         </div>
       </section>
 
@@ -95,7 +87,7 @@ export default function TrainersPage() {
             title="A block, not a"
             accent="workout list"
             align="center"
-            lede="Coaching in this demo follows the same three-step structure described on the homepage."
+            lede="Every coaching block follows the same three-step structure: assess, build, progress."
           />
           <div className="mt-12 grid gap-4 md:grid-cols-3">
             {trainingPrinciples.map((principle, index) => (

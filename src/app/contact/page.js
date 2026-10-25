@@ -24,7 +24,7 @@ export default function ContactPage() {
             <span className="text-signal">Fraser Road.</span>
           </>
         }
-        lede="Demo contact details for a fictional gym. The form below is fully functional in this project: it validates on the server, stores your message and emails the front desk when Resend is configured."
+        lede="Visit the floor, call or WhatsApp the front desk, or send a message below and a coach will get back to you."
         image={media.training.exterior}
       />
 
@@ -59,8 +59,8 @@ export default function ContactPage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <Mail size={17} className="mt-0.5 shrink-0 text-signal" aria-hidden="true" />
-                  <a href={`mailto:${gym.email}`} className="break-all text-fog hover:text-signal">
-                    {gym.email}
+                  <a href={`mailto:${gym.contactEmail}`} className="break-all text-fog hover:text-signal">
+                    {gym.contactEmail}
                   </a>
                 </li>
                 <li className="flex items-start gap-3">

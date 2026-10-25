@@ -2,9 +2,11 @@
 
 A premium, animation-led gym website with a real membership purchase flow.
 
-> **Demo notice.** IronVault Fitness is a **fictional business** created for a portfolio project.
-> The address, phone number, prices, coaches, statistics and testimonials are illustrative sample content.
-> Payments run in **Razorpay test mode** only. Nothing here is legal, medical or financial advice.
+> **Content status (developers).** The address, phone number, coach profiles, statistics, testimonials and
+> photography are placeholder content — replace them with real details before launch (`src/config/*`).
+> Payments run in **Razorpay test mode** until live keys are configured; the public site only states the
+> payment mode where it matters (checkout, plan cards, payment FAQ, terms). The legal pages have not been
+> legally reviewed.
 
 ---
 
@@ -21,13 +23,13 @@ IronVault is a strength-first gym site built to show three things at once:
 | Public | Account | Staff / Admin | API |
 | --- | --- | --- | --- |
 | `/` home | `/login` | `/staff` member lookup | `/api/auth/[...nextauth]` |
-| `/about` | `/register` | `/admin` operations | `/api/register` |
-| `/memberships` | `/checkout?plan=` | `/staff/accept-invite` | `/api/contact` |
-| `/facilities` | `/checkout/result?ref=` | | `/api/payments/create-order` |
-| `/trainers` | `/account` | | `/api/payments/verify` |
-| `/gallery` | | | `/api/payments/status` |
-| `/contact` | | | `/api/payments/abandon` |
-| `/faq` | | | `/api/webhooks/razorpay` |
+| `/about` | `/register` | `/admin` overview + metrics | `/api/register` |
+| `/memberships` | `/checkout?plan=` | `/admin/members` memberships (suspend / reinstate) | `/api/contact` |
+| `/facilities` | `/checkout/result?ref=` | `/admin/users` accounts (enable / disable) | `/api/payments/create-order` |
+| `/trainers` | `/account` | `/admin/staff` invitations + team | `/api/payments/verify` |
+| `/gallery` | | `/admin/payments` records + reconciliation | `/api/payments/status` |
+| `/contact` | | `/admin/audit` audit log | `/api/payments/abandon` |
+| `/faq` | | `/staff/accept-invite` | `/api/webhooks/razorpay` |
 | `/privacy`, `/terms` | | | `/api/staff/reconcile` |
 | | | | `/api/admin/invitations` |
 | | | | `/api/admin/memberships` |
@@ -105,8 +107,9 @@ npm test          # unit + integration tests (see section 17)
 | `RAZORPAY_KEY_SECRET` | for payments | **Server only.** Signs/verifies checkout signatures. |
 | `RAZORPAY_WEBHOOK_SECRET` | for webhooks | **Server only.** Verifies webhook signatures. |
 | `RESEND_API_KEY` | for email | Leave empty to disable sending — the app logs a warning and continues. |
-| `RESEND_FROM_EMAIL` | for email | Must be a verified sender, e.g. `IronVault <memberships@yourdomain.com>`. |
-| `CONTACT_INBOX_EMAIL` | optional | Where contact-form notifications go (defaults to the gym email). |
+| `RESEND_FROM_EMAIL` | for email | The **sender** identity. Must be a verified sender, e.g. `IronVault <memberships@yourdomain.com>`. Not a contact or invitation address. |
+| `CONTACT_INBOX_EMAIL` | optional | Overrides `gym.contactEmail` as the destination of contact-form notifications (and the reply-to of welcome / membership emails). Customer-facing. |
+| `STAFF_INVITE_EMAIL` | optional | Overrides `gym.staffInviteEmail`, the reply-to of staff/admin invitation emails. Never used for customer mail. |
 | `NEXT_PUBLIC_SITE_URL` | production | Used in metadata, sitemap and invitation links. |
 | `MONGODB_TEST_URI` | tests only | Enables the integration suite. |
 
@@ -175,7 +178,7 @@ Sign in at `/login`, then open `/admin`.
 ### Authorisation layers
 
 1. `src/proxy.js` — redirects visitors with **no session cookie** away from `/account`, `/checkout`, `/staff`, `/admin`. Convenience only; it never makes role decisions.
-2. Page-level checks — `getSessionUser()` + role comparison (`/staff`, `/admin`), `redirect()` when signed out.
+2. Page-level checks — `/staff` compares the session role; every `/admin` page calls `adminGuard()` (`src/lib/admin-guard.js`), which re-reads the user from MongoDB, redirects signed-out visitors to `/login?next=…` and renders an access-denied screen for staff, customers and disabled accounts. The admin layout only hides the admin chrome; it is never the security boundary.
 3. API-level checks — `requireUser()` / `requireRole([...])` in every route handler. **This is the real boundary.**
 
 Ownership is enforced by putting the user id in the *query*, never by filtering afterwards:
@@ -332,11 +335,40 @@ So buying an annual plan while a monthly one is active keeps the monthly days, m
 
 ---
 
+## 15b. Admin dashboard and role-based sign-in
+
+`/admin` is a dedicated admin area with its own layout (`app/admin/layout.js`, `components/admin/*`): sidebar on desktop, scrollable section bar on phones, a "Back to website" link and sign-out. The public header and footer are not rendered there (`components/layout/SiteChrome.js`).
+
+| Section | What it does | Backed by |
+| --- | --- | --- |
+| Overview | revenue, active/queued/suspended memberships, accounts, open invitations, payments needing attention, recent audit entries | `services/admin.js` (read-only) |
+| Members | search; suspend / reinstate memberships (reason required, audited); disable / enable the member's account | `/api/admin/memberships`, `/api/admin/users` |
+| Accounts | every account, filter by role and status; enable / disable | `/api/admin/users` |
+| Staff & invites | create invitations, see invitation state, staff and admin accounts | `/api/admin/invitations`, `services/invitations.js` |
+| Payments | all payment records with filters, search and **Reconcile** for created / pending / review rows | `/api/staff/reconcile` |
+| Audit log | paginated log of privileged actions | `AuditLog` |
+
+**Sign-in destinations** (`src/lib/redirects.js`): after login the role decides where you land — customer → `/account`, staff → `/staff`, admin → `/admin`. A `?next=` path is honoured only if it is a same-site relative path **and** the role may open it (so a customer cannot be steered into `/admin`); `//host`, `/\host`, absolute URLs and control characters are rejected. The role is read from the session issued by the login, never from the URL.
+
+All mutations keep using the existing admin-checked API routes; the dashboard adds no second code path for them.
+
+---
+
 ## 16. Resend setup and email testing
 
 1. Create a Resend account, add and verify your sending domain (DNS records).
 2. Create an API key → `RESEND_API_KEY`; set `RESEND_FROM_EMAIL` (must be on the verified domain).
 3. Restart. Emails sent: **welcome**, **membership confirmed** (plan, amount, start/end dates, payment reference), **staff invitation**, **contact-form notification**.
+
+**Three different addresses — do not mix them up.**
+
+| Setting | Purpose | Used by |
+| --- | --- | --- |
+| `RESEND_FROM_EMAIL` | sender identity (verified Resend sender) | every outgoing email |
+| `gym.contactEmail` (override: `CONTACT_INBOX_EMAIL`) | customer-facing business address | site footer, contact page, privacy policy; contact-form notifications are delivered **to** it; reply-to on welcome and membership-confirmation emails |
+| `gym.staffInviteEmail` (override: `STAFF_INVITE_EMAIL`) | staff/admin invitation address | reply-to on staff and administrator invitation emails only |
+
+There is deliberately no fallback between the two business addresses. If an address is empty the corresponding email is skipped (contact notification) or sent without a reply-to (invitations), with a console warning — it is never silently redirected to the other mailbox. The invitee receives the invitation at the address the admin typed; `gym.staffInviteEmail` only receives their replies.
 
 **Email must never fail a payment.** Sending happens *after* activation, inside a `try/catch`; a failure is logged and stored in `payment.emailError` while `payment.emailSentAt` stays empty — both are visible for follow-up. With Resend unset, the app logs `[email] skipped …` and continues normally.
 

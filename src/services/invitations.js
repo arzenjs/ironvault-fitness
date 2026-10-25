@@ -43,7 +43,7 @@ export async function createInvitation({ email, role = "staff", actor }) {
   const inviteUrl = `${siteUrl}/staff/accept-invite?token=${token}`;
 
   // Email failure does not roll back the invitation: the link is also returned
-  // once to the admin so it can be shared manually in a demo environment.
+  // once to the admin so it can be shared manually if email is not configured.
   const delivery = await sendStaffInvitation({
     email: normalised,
     inviteUrl,

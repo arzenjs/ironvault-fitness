@@ -1,10 +1,10 @@
 /** Primary navigation. `href` values are the real routes in the app. */
 export const mainNav = [
-  { href: "/memberships", label: "Memberships" },
-  { href: "/facilities", label: "Facilities" },
-  { href: "/trainers", label: "Coaches" },
-  { href: "/gallery", label: "Gallery" },
   { href: "/about", label: "About" },
+  { href: "/gallery", label: "Gallery" },
+  { href: "/trainers", label: "Coaches" },
+  { href: "/facilities", label: "Facilities" },
+  { href: "/memberships", label: "Memberships" },
   { href: "/contact", label: "Contact" },
 ];
 

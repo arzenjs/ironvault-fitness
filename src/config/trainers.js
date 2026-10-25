@@ -1,7 +1,6 @@
 /**
- * Fictional coaching team for the portfolio demo. Names, bios and experience
- * are invented sample content; portraits are stock fitness photography and do
- * not represent real named individuals.
+ * Coaching team shown on the homepage and the Coaches page. Replace names,
+ * bios and portraits with real staff details before launch.
  */
 export const trainers = [
   {
@@ -18,7 +17,6 @@ export const trainers = [
       height: 1100,
       alt: "Coach steadying a barbell during a training session (stock photograph)",
     },
-    credential: "Demo profile",
     availability: "Mon–Sat · floor hours",
   },
   {
@@ -35,7 +33,6 @@ export const trainers = [
       height: 1100,
       alt: "Member training with a resistance band (stock photograph)",
     },
-    credential: "Demo profile",
     availability: "Tue–Sun · mornings",
   },
   {
@@ -52,7 +49,6 @@ export const trainers = [
       height: 1100,
       alt: "Athlete working with a battle rope (stock photograph)",
     },
-    credential: "Demo profile",
     availability: "Mon–Sat · evenings",
   },
   {
@@ -69,7 +65,6 @@ export const trainers = [
       height: 1100,
       alt: "Coach reviewing a training plan with a member (stock photograph)",
     },
-    credential: "Demo profile",
     availability: "Wed–Sun · by appointment",
   },
 ];

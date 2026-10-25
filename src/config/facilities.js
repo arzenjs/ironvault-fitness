@@ -2,7 +2,7 @@ import { media } from "./media";
 
 /**
  * Facilities shown on the homepage and the dedicated Facilities page.
- * All descriptions are fictional demo content for this portfolio project.
+ * Keep descriptions and equipment counts in sync with the real floor.
  */
 export const facilities = [
   {

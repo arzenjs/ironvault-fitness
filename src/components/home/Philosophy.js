@@ -17,34 +17,35 @@ export default function Philosophy() {
       <div className="shell grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
         {/* layered imagery */}
         <div className="relative order-2 lg:order-1">
-          <div className="relative z-10 w-[82%]">
-            <RevealImage
-              src={media.about.group.src}
-              alt={media.about.group.alt}
-              sizes="(max-width: 1024px) 80vw, 400px"
-              className="aspect-[4/5] w-full"
-              rounded="rounded-[1.4rem]"
-            />
-          </div>
-          <div className="absolute -bottom-8 right-0 z-20 w-[52%] overflow-hidden rounded-[1.2rem] border border-white/15 shadow-2xl">
-            <RevealImage
-              src={media.about.class.src}
-              alt={media.about.class.alt}
-              sizes="(max-width: 1024px) 50vw, 260px"
-              className="aspect-square w-full"
-              rounded="rounded-[1.2rem]"
-              delay={0.15}
-            />
+          {/* Only the two photographs are layered; the coaching note sits below this block in
+              normal flow, so the overlapping thumbnail can never cover the text. */}
+          <div className="relative pb-10">
+            <div className="relative z-10 w-[82%]">
+              <RevealImage
+                src={media.about.group.src}
+                alt={media.about.group.alt}
+                sizes="(max-width: 1024px) 80vw, 400px"
+                className="aspect-[4/5] w-full"
+                rounded="rounded-[1.4rem]"
+              />
+            </div>
+            <div className="absolute bottom-0 right-0 z-20 w-[52%] overflow-hidden rounded-[1.2rem] border border-white/15 shadow-2xl">
+              <RevealImage
+                src={media.about.class.src}
+                alt={media.about.class.alt}
+                sizes="(max-width: 1024px) 50vw, 260px"
+                className="aspect-square w-full"
+                rounded="rounded-[1.2rem]"
+                delay={0.15}
+              />
+            </div>
           </div>
           <div className="absolute -left-3 top-6 hidden h-24 w-px bg-gradient-to-b from-signal to-transparent md:block" aria-hidden="true" />
 
-          <Reveal variant="up" delay={0.3} className="relative z-30 mt-20 max-w-[15rem] lg:mt-24">
+          <Reveal variant="up" delay={0.3} className="relative z-30 mt-6 max-w-[15rem] lg:mt-8">
             <p className="text-sm leading-relaxed text-ash">
               <span className="text-fog">“Technique volume before load.”</span> The line every new member hears
               in their first week — and the reason the floor stays injury-free.
-            </p>
-            <p className="mt-3 font-mono text-[0.5625rem] uppercase tracking-[0.2em] text-ash/60">
-              Demo coaching note
             </p>
           </Reveal>
         </div>

@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { ArrowDownRight, ArrowUpRight, Play, Star } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Play } from "lucide-react";
 import SmartImage from "@/components/ui/SmartImage";
 import { EASE_OUT_EXPO } from "@/lib/motion";
 import { media } from "@/config/media";
@@ -22,7 +22,7 @@ export default function Hero() {
   const reduceMotion = useReducedMotion();
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end start"] });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", reduceMotion ? "0%" : "12%"]);
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-6%", reduceMotion ? "0%" : "6%"]);
   const backY = useTransform(scrollYProgress, [0, 1], ["0%", reduceMotion ? "0%" : "-8%"]);
   const fadeOut = useTransform(scrollYProgress, [0, 0.85], [1, reduceMotion ? 1 : 0.35]);
 
@@ -32,7 +32,7 @@ export default function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative isolate overflow-hidden pb-16 pt-28 md:pb-24 md:pt-32"
+      className="relative isolate overflow-hidden pb-14 pt-24 md:pb-24 md:pt-32"
       aria-labelledby="hero-heading"
     >
       {/* Background layers */}
@@ -50,7 +50,7 @@ export default function Hero() {
       <div className="grain absolute inset-0 -z-10" aria-hidden="true" />
 
       <div className="shell relative">
-        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10 xl:gap-16">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10 xl:gap-16">
           {/* ---------------- copy ---------------- */}
           <div className="relative">
             <motion.div
@@ -70,7 +70,7 @@ export default function Hero() {
               </span>
             </motion.div>
 
-            <h1 id="hero-heading" className="display-tight mt-7 text-[clamp(2.55rem,6.9vw,6.2rem)]">
+            <h1 id="hero-heading" className="display-tight mt-6 text-[clamp(2.35rem,11vw,3.6rem)] sm:text-[clamp(3.6rem,8vw,5rem)] lg:mt-7 lg:text-[clamp(3.4rem,6.2vw,6.2rem)]">
               <span className="sr-only">Built for Strength. Designed for Progress.</span>
               <span aria-hidden="true" className="block">
                 {line1.map((word, index) => (
@@ -100,7 +100,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.55, duration: 0.7, ease: EASE_OUT_EXPO }}
-              className="lede mt-6 max-w-lg"
+              className="lede mt-5 max-w-lg md:mt-6"
             >
               A premium training floor built around the barbell: calibrated plates, coached programming and a
               room that respects your session. No queues at the racks, no noise between sets.
@@ -127,7 +127,7 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.9, duration: 0.8 }}
-              className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-white/10 pt-6"
+              className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-white/10 pt-6 md:mt-10"
             >
               <div>
                 <dt className="eyebrow">Open today</dt>
@@ -137,16 +137,6 @@ export default function Hero() {
                 <dt className="eyebrow">Plans from</dt>
                 <dd className="mt-1 font-mono text-sm text-fog">₹1,499 / month</dd>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="flex" aria-hidden="true">
-                  {[0, 1, 2, 3, 4].map((i) => (
-                    <Star key={i} size={12} className="fill-signal text-signal" />
-                  ))}
-                </span>
-                <span className="text-xs text-ash">
-                  Demo reviews <span className="sr-only">fictional sample content</span>
-                </span>
-              </div>
             </motion.dl>
           </div>
 
@@ -155,11 +145,11 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, ease: EASE_OUT_EXPO, delay: 0.15 }}
-            className="relative mx-auto w-full max-w-[560px] lg:max-w-none"
+            className="relative mx-auto w-full max-w-[440px] sm:max-w-[520px] lg:max-w-none"
           >
             <motion.div style={{ y: backY }} className="relative">
               {/* back strip */}
-              <div className="absolute -left-4 top-8 hidden h-[62%] w-[38%] overflow-hidden rounded-2xl border border-white/10 sm:block">
+              <div className="absolute -left-4 top-8 hidden h-[62%] w-[38%] overflow-hidden rounded-2xl border border-white/10 lg:block">
                 <SmartImage
                   src={media.hero.aisle.src}
                   alt=""
@@ -171,19 +161,23 @@ export default function Hero() {
               </div>
 
               {/* main portrait */}
-              <div className="relative ml-auto w-[86%] sm:w-[78%]">
+              <div className="relative ml-auto w-full lg:w-[78%]">
                 <div className="absolute -inset-[1px] rounded-[1.35rem] bg-gradient-to-b from-white/25 via-white/5 to-transparent" aria-hidden="true" />
                 <div className="relative overflow-hidden rounded-[1.3rem] bg-graphite">
-                  <motion.div style={{ y: imageY }} className="relative aspect-[4/5] w-full">
-                    <SmartImage
-                      src={media.hero.athlete.src}
-                      alt={media.hero.athlete.alt}
-                      priority
-                      sizes="(max-width: 640px) 86vw, (max-width: 1024px) 60vw, 420px"
-                      className="h-full w-full"
-                      imgClassName="object-cover object-[58%_35%]"
-                    />
-                  </motion.div>
+                  {/* The photo is 14% taller than its frame and only ever shifts by less than that
+                      slack, so the parallax can never expose an empty strip at the top or bottom. */}
+                  <div className="relative aspect-[4/5] w-full overflow-hidden">
+                    <motion.div style={{ y: imageY }} className="absolute inset-x-0 -top-[7%] h-[114%]">
+                      <SmartImage
+                        src={media.hero.athlete.src}
+                        alt={media.hero.athlete.alt}
+                        priority
+                        sizes="(max-width: 480px) 92vw, (max-width: 1024px) 520px, 420px"
+                        className="h-full w-full"
+                        imgClassName="object-cover object-[58%_35%]"
+                      />
+                    </motion.div>
+                  </div>
                   <motion.div
                     style={{ opacity: fadeOut }}
                     className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent"
@@ -208,7 +202,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.75, duration: 0.7, ease: EASE_OUT_EXPO }}
-                className="absolute -bottom-6 left-0 hidden w-[190px] rounded-2xl border border-white/12 bg-coal/95 p-4 shadow-2xl backdrop-blur sm:block sm:-left-6"
+                className="relative mt-4 rounded-2xl border border-white/12 bg-coal/95 p-4 shadow-2xl backdrop-blur lg:absolute lg:-bottom-6 lg:-left-6 lg:mt-0 lg:w-[190px]"
               >
                 <p className="eyebrow">Squat platforms</p>
                 <p className="display mt-1 text-3xl">04</p>
@@ -225,7 +219,7 @@ export default function Hero() {
         </div>
 
         {/* scroll cue */}
-        <div className="mt-14 flex items-center justify-between gap-6 border-t border-white/10 pt-6 md:mt-20">
+        <div className="mt-12 flex items-center justify-between gap-6 border-t border-white/10 pt-6 md:mt-20">
           <a
             href="#brand-statement"
             className="group flex items-center gap-3 text-ash transition-colors hover:text-fog"
@@ -242,7 +236,7 @@ export default function Hero() {
             <span className="font-mono text-[0.625rem] uppercase tracking-[0.24em]">Scroll to explore</span>
           </a>
           <p className="hidden max-w-[16rem] text-right text-[0.6875rem] leading-relaxed text-ash/70 md:block">
-            Demo site · fictional gym · Razorpay test-mode payments
+            Fraser Road, Patna · Strength-first since {gym.established}
           </p>
         </div>
       </div>

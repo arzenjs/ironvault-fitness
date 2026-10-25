@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { AlertCircle, Eye, EyeOff, Loader2, UserPlus } from "lucide-react";
-import { safeNextPath } from "@/lib/redirects";
+import { resolvePostLoginPath, safeNextPath } from "@/lib/redirects";
 
 /**
  * Registration → immediate sign-in → continue to the original destination
@@ -13,7 +13,8 @@ import { safeNextPath } from "@/lib/redirects";
  */
 export default function RegisterForm({ nextPath }) {
   const router = useRouter();
-  const target = safeNextPath(nextPath);
+  // Public registration only ever creates customers, so staff/admin destinations are ignored.
+  const target = resolvePostLoginPath("customer", safeNextPath(nextPath, null));
   const [values, setValues] = useState({
     name: "",
     email: "",

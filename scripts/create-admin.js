@@ -2,18 +2,10 @@
 /**
  * Secure initial-admin bootstrap.
  *
- * There is no public endpoint that can create an admin. The first admin is made
- * locally with database credentials, like a migration:
- *
- *   npm run create-admin -- --email=owner@example.com --name="Gym Owner"
- *
- * The password is read from the CREATE_ADMIN_PASSWORD env var, or asked for
- * interactively (hidden input) so it never lands in shell history.
- *
- * Re-running for an existing email either promotes the account (with --promote)
- * or refuses, so this cannot silently take over an account.
+ *   npm run create-admin
+ * Reads ADMIN_EMAIL, ADMIN_NAME, and ADMIN_PASSWORD from environment variables or prompts.
  */
-import { createInterface } from "node:readline";
+import readline from "node:readline";
 import process from "node:process";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
@@ -30,39 +22,48 @@ function fail(message) {
   process.exit(1);
 }
 
-async function promptHidden(question) {
-  process.stdout.write(question);
-  const rl = createInterface({ input: process.stdin, output: process.stdout, terminal: true });
-  // Hide typed characters.
-  const originalWrite = rl._writeToOutput.bind(rl);
-  rl._writeToOutput = () => {};
+function ask(question, { hidden = false } = {}) {
   return new Promise((resolve) => {
-    rl.question("", (answer) => {
-      rl._writeToOutput = originalWrite;
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: true });
+    if (hidden) {
+      rl._writeToOutput = (text) => {
+        if (text.includes(question)) rl.output.write(text);
+      };
+    }
+    rl.question(question, (answer) => {
       rl.close();
-      process.stdout.write("\n");
-      resolve(answer);
+      if (hidden) process.stdout.write("\n");
+      resolve(answer.trim());
     });
   });
 }
 
 async function main() {
-  if (!MONGODB_URI) fail("MONGODB_URI is not set. Run with: npm run create-admin -- --email=... (loads .env.local)");
+  if (!MONGODB_URI) fail("MONGODB_URI is not set. Check your .env.local file.");
 
-  const email = (arg("email") || "").toLowerCase().trim();
-  const name = (arg("name") || "IronVault Admin").trim();
-  const promote = process.argv.includes("--promote");
+  let emailInput = process.env.ADMIN_EMAIL || arg("email");
+  if (!emailInput) {
+    emailInput = await ask("Admin email: ");
+  }
+  const email = emailInput.toLowerCase().trim();
 
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-    fail("Provide a valid email: npm run create-admin -- --email=owner@example.com --name=\"Gym Owner\"");
+    fail("Provide a valid email address.");
   }
 
-  let password = process.env.CREATE_ADMIN_PASSWORD;
+  let nameInput = process.env.ADMIN_NAME || arg("name");
+  if (!nameInput) {
+    nameInput = await ask("Admin full name [IronVault Admin]: ");
+  }
+  const name = nameInput.trim() || "IronVault Admin";
+
+  const promote = process.argv.includes("--promote");
+
+  let password = process.env.ADMIN_PASSWORD || process.env.CREATE_ADMIN_PASSWORD;
   if (!password) {
-    if (!process.stdin.isTTY) fail("No TTY available. Set CREATE_ADMIN_PASSWORD for non-interactive use.");
-    password = await promptHidden("Admin password (hidden): ");
-    const confirm = await promptHidden("Confirm password: ");
-    if (password !== confirm) fail("Passwords did not match.");
+    password = await ask("Password (hidden): ", { hidden: true });
+    const repeatPassword = await ask("Repeat password: ", { hidden: true });
+    if (password !== repeatPassword) fail("Passwords do not match.");
   }
 
   if (password.length < 10) fail("Use a password of at least 10 characters.");

@@ -9,6 +9,7 @@ import { signOut, useSession } from "next-auth/react";
 import { Logo } from "@/components/ui/Logo";
 import { EASE_OUT_EXPO } from "@/lib/motion";
 import { mainNav } from "@/config/navigation";
+import { roleHome } from "@/lib/redirects";
 import { gym, whatsappUrl } from "@/config/gym";
 
 function isActive(pathname, href) {
@@ -25,6 +26,7 @@ export default function SiteHeader() {
   const menuOpen = menuState.open && menuState.path === pathname;
   const setMenuOpen = useCallback((open) => setMenuState({ open, path: pathname }), [pathname]);
   const user = session?.user;
+  const home = roleHome(user?.role);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -95,9 +97,9 @@ export default function SiteHeader() {
               <span className="h-9 w-24 animate-pulse rounded-full bg-white/10" aria-hidden="true" />
             ) : user ? (
               <>
-                <Link href="/account" className="btn btn-ghost btn-sm">
+                <Link href={home.href} className="btn btn-ghost btn-sm">
                   <LayoutDashboard size={15} aria-hidden="true" />
-                  My account
+                  {home.label}
                 </Link>
                 <button
                   type="button"
@@ -200,8 +202,8 @@ export default function SiteHeader() {
               >
                 {user ? (
                   <>
-                    <Link href="/account" className="btn btn-primary w-full" onClick={() => setMenuOpen(false)}>
-                      <User size={16} aria-hidden="true" /> My account
+                    <Link href={home.href} className="btn btn-primary w-full" onClick={() => setMenuOpen(false)}>
+                      <User size={16} aria-hidden="true" /> {home.label}
                     </Link>
                     <button type="button" className="btn btn-outline w-full" onClick={() => signOut({ callbackUrl: "/" })}>
                       <LogOut size={16} aria-hidden="true" /> Sign out

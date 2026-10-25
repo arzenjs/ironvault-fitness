@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import AuthShell from "@/components/auth/AuthShell";
 import RegisterForm from "@/components/auth/RegisterForm";
 import { getSessionUser } from "@/lib/session";
-import { safeNextPath } from "@/lib/redirects";
+import { resolvePostLoginPath, safeNextPath } from "@/lib/redirects";
 import { media } from "@/config/media";
 
 export const metadata = {
@@ -13,10 +13,10 @@ export const metadata = {
 
 export default async function RegisterPage({ searchParams }) {
   const params = await searchParams;
-  const nextPath = safeNextPath(params?.next);
+  const nextPath = safeNextPath(params?.next, null);
   const user = await getSessionUser();
 
-  if (user) redirect(nextPath);
+  if (user) redirect(resolvePostLoginPath(user.role, nextPath));
 
   return (
     <AuthShell

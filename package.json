@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "IronVault Fitness — premium gym marketing site with membership checkout (portfolio demo).",
+  "description": "IronVault Fitness — premium gym website with membership checkout, staff portal and admin dashboard.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

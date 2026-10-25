@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import AuthShell from "@/components/auth/AuthShell";
 import LoginForm from "@/components/auth/LoginForm";
 import { getSessionUser } from "@/lib/session";
-import { safeNextPath } from "@/lib/redirects";
+import { resolvePostLoginPath, safeNextPath } from "@/lib/redirects";
 import { media } from "@/config/media";
 
 export const metadata = {
@@ -13,11 +13,12 @@ export const metadata = {
 
 export default async function LoginPage({ searchParams }) {
   const params = await searchParams;
-  const nextPath = safeNextPath(params?.next);
+  // `null` when no (valid) destination was requested; the role then decides where to land.
+  const nextPath = safeNextPath(params?.next, null);
   const user = await getSessionUser();
 
-  // Already signed in → continue to the intended destination.
-  if (user) redirect(nextPath);
+  // Already signed in → continue to the requested page, or the role's own home.
+  if (user) redirect(resolvePostLoginPath(user.role, nextPath));
 
   return (
     <AuthShell

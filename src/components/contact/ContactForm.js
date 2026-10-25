@@ -51,7 +51,7 @@ export default function ContactForm() {
         title: "Message sent",
         description: data.emailed
           ? "The front desk has been notified. We usually reply within one working day."
-          : "Your message was saved. Email notifications are not configured in this demo, so a reply may be delayed.",
+          : "Your message was received. Our team will get back to you as soon as possible.",
       });
     } catch {
       setStatus("error");

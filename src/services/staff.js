@@ -8,7 +8,7 @@ import { deriveMembershipState } from "@/lib/membership-status";
  *
  * Kept intentionally simple: load the matching customer accounts (capped), then
  * their memberships and latest payments in two extra queries, and filter the
- * derived state in JS. At demo scale that is cheaper to read and maintain than a
+ * derived state in JS. At current scale that is cheaper to read and maintain than a
  * complex aggregation pipeline.
  */
 export async function searchMembers({ query = "", status = "all", planId = "all", limit = 40 } = {}) {

@@ -23,7 +23,7 @@ export default function GalleryPage() {
             <span className="text-signal">unedited.</span>
           </>
         }
-        lede="Training photographs from the demo's stock library. Filter by category, then open any image for a larger view."
+        lede="Training photographs from the floor. Filter by category, then open any image for a larger view."
         meta={["14 photographs", "Filterable", "Keyboard accessible"]}
         image={media.training.cta}
       />
@@ -44,11 +44,6 @@ export default function GalleryPage() {
               Train here <ArrowUpRight size={12} aria-hidden="true" />
             </Link>
           </div>
-
-          <p className="mt-6 text-[0.6875rem] leading-relaxed text-ash/60">
-            Photography is licensed stock imagery used to represent a fictional gym. It does not depict
-            IronVault members or staff.
-          </p>
         </div>
       </section>
     </>

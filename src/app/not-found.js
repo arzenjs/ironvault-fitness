@@ -16,7 +16,7 @@ export default function NotFound() {
           Off the <span className="text-signal">floor</span>
         </h1>
         <p className="lede mt-6 max-w-lg">
-          That page is not part of this demo. The racks, plans and your account are all still where you left
+          We could not find that page. The racks, plans and your account are all still where you left
           them.
         </p>
         <div className="mt-9 flex flex-wrap gap-3">

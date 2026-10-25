@@ -35,9 +35,9 @@ export default function SiteFooter() {
                 <Phone size={15} className="shrink-0 text-signal" aria-hidden="true" />
                 {gym.phone}
               </a>
-              <a href={`mailto:${gym.email}`} className="flex items-center gap-2.5 break-all hover:text-fog">
+              <a href={`mailto:${gym.contactEmail}`} className="flex items-center gap-2.5 break-all hover:text-fog">
                 <Mail size={15} className="shrink-0 text-signal" aria-hidden="true" />
-                {gym.email}
+                {gym.contactEmail}
               </a>
               <a
                 href={whatsappUrl}
@@ -103,7 +103,7 @@ export default function SiteFooter() {
 
         <div className="mt-14 flex flex-col gap-6 border-t border-white/10 pt-7 text-xs text-ash md:flex-row md:items-center md:justify-between">
           <p>
-            © {year} {gym.name}. Portfolio demo — fictional business, sample data.
+            © {year} {gym.name}. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             {footerNav.legal.map((item) => (
@@ -116,11 +116,6 @@ export default function SiteFooter() {
             </Link>
           </div>
         </div>
-        <p className="mt-4 max-w-3xl text-[0.6875rem] leading-relaxed text-ash/60">
-          Demo notice: IronVault Fitness is a fictional gym created for a portfolio project. Prices,
-          facilities, coach profiles, statistics and testimonials are illustrative sample content and do not
-          describe a real business. Payments run in Razorpay test mode only.
-        </p>
       </div>
     </footer>
   );

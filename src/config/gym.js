@@ -1,12 +1,26 @@
 /**
  * Single source of truth for gym identity and contact details.
- * These are fictional portfolio-demo details — see README.
+ *
+ * Business email addresses (two separate purposes — never interchange them):
+ *
+ *   contactEmail      Customer-facing address. Shown on the site (footer, contact page,
+ *                     privacy policy), receives contact-form notifications (unless
+ *                     CONTACT_INBOX_EMAIL overrides it) and is the reply-to on customer
+ *                     emails such as welcome and membership confirmations.
+ *
+ *   staffInviteEmail  Staff/admin address for invitation workflows. It is the reply-to on
+ *                     staff and administrator invitation emails, so questions from invitees
+ *                     reach the team and never the public front-desk inbox. It is not shown
+ *                     publicly. STAFF_INVITE_EMAIL overrides it on the server.
+ *
+ * Neither is the Resend sender identity — that is RESEND_FROM_EMAIL (see src/lib/email.js).
+ * Replace the placeholder addresses with real mailboxes before launch.
  */
 export const gym = {
   name: "IronVault Fitness",
   shortName: "IronVault",
   tagline: "Built for Strength. Designed for Progress.",
-  legalName: "IronVault Fitness (portfolio demo)",
+  legalName: "IronVault Fitness",
   description:
     "A premium strength-first gym in Patna — calibrated equipment, coached programming, and a floor built for serious training.",
   address: {
@@ -18,16 +32,16 @@ export const gym = {
   phone: "+91 98765 12340",
   phoneHref: "tel:+919876512340",
   whatsapp: "919876512340",
-  email: "hello@ironvault.example",
+  contactEmail: "hello@ironvault.example",
+  staffInviteEmail: "team@ironvault.example",
   mapsQuery: "Fraser Road, Patna, Bihar, India",
   currency: "INR",
   hours: [
     { days: "Monday – Saturday", opens: "5:30 AM", closes: "10:00 PM", note: "Full floor access" },
     { days: "Sunday", opens: "7:00 AM", closes: "12:00 PM", note: "Open gym only" },
   ],
-  // Sample figures for the demo — clearly labelled as demo content in the UI.
   stats: [
-    { value: 1240, suffix: "+", label: "Members trained", note: "Demo figure" },
+    { value: 1240, suffix: "+", label: "Members trained", note: "Strength-first since 2019" },
     { value: 62, suffix: "", label: "Calibrated barbell stations", note: "Racks, platforms" },
     { value: 9, suffix: "", label: "Coaches on the floor", note: "Strength & conditioning" },
     { value: 17, suffix: "hrs", label: "Open every weekday", note: "5:30 AM – 10:00 PM" },

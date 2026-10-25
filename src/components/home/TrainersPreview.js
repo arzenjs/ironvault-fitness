@@ -5,7 +5,7 @@ import SmartImage from "@/components/ui/SmartImage";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { trainers } from "@/config/trainers";
 
-/** Coach cards: portrait, focus tags and a hover lift. Profiles are demo data. */
+/** Coach cards: portrait, focus tags and a hover lift. */
 export default function TrainersPreview() {
   return (
     <section className="section border-t border-white/10 bg-ink" aria-labelledby="coaches-heading">
@@ -15,7 +15,7 @@ export default function TrainersPreview() {
             eyebrow="The coaching team"
             title="People who read"
             accent="your program"
-            lede="Four fictional coaches for this demo. On a real floor, this is where you would meet the person responsible for your first six weeks."
+            lede="Meet the person responsible for your first six weeks: four coaches who own your assessment, your programming and your progress."
             size="md"
           />
           <Link href="/trainers" className="btn btn-outline shrink-0 self-start md:self-auto">
@@ -34,11 +34,11 @@ export default function TrainersPreview() {
                     alt={trainer.image.alt}
                     sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 300px"
                     className="h-full w-full"
-                    imgClassName="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"
+                    imgClassName="object-cover object-top transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-ink/25 to-transparent" aria-hidden="true" />
                   <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-ink/60 px-2 py-1 font-mono text-[0.5rem] uppercase tracking-[0.16em] text-fog/80 backdrop-blur">
-                    {trainer.credential}
+                    {trainer.focus[0]}
                   </span>
                   <div className="absolute inset-x-0 bottom-0 p-4">
                     <p className="font-mono text-[0.5625rem] uppercase tracking-[0.2em] text-signal">

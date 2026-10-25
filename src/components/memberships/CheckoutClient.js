@@ -187,7 +187,7 @@ export default function CheckoutClient({ plan, user, razorpayConfigured }) {
               </div>
               <div className="flex justify-between gap-4">
                 <dt className="text-ash">Taxes</dt>
-                <dd className="text-ash">Included in demo pricing</dd>
+                <dd className="text-ash">Included in price</dd>
               </div>
               <div className="flex justify-between gap-4 border-t border-white/10 pt-3">
                 <dt className="font-semibold text-fog">Total due today</dt>

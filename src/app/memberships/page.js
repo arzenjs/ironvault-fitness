@@ -114,7 +114,7 @@ export default async function MembershipsPage() {
               <Link href="/faq" className="text-fog underline decoration-signal/60 underline-offset-4">
                 FAQ
               </Link>
-              . This demo runs on Razorpay test mode — no real money moves.
+              . Online payments currently run in Razorpay test mode — no real money moves.
             </p>
           </div>
           <Accordion items={paymentFaq.map((item) => ({ q: item.q, a: item.a }))} defaultOpen={0} />

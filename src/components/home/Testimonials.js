@@ -27,11 +27,11 @@ export default function Testimonials() {
       <div className="shell">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <SectionHeading
-            eyebrow="Member stories · demo content"
+            eyebrow="Member stories"
             title="What training here"
             accent="feels like"
             size="md"
-            lede="Fictional quotes written for this portfolio project. They are not verified reviews from real members."
+            lede="What members say about the assessment, the coaching and the floor."
           />
           <div className="flex gap-2">
             <button

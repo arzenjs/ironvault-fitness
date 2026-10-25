@@ -9,7 +9,7 @@ import { whatsappUrl } from "@/config/gym";
 export const metadata = {
   title: "Frequently asked questions",
   description:
-    "Answers about memberships, payments, facilities and account handling at IronVault Fitness — a fictional demo gym.",
+    "Answers about memberships, payments, facilities and account handling at IronVault Fitness.",
   alternates: { canonical: "/faq" },
 };
 
@@ -25,7 +25,7 @@ export default function FaqPage() {
             <span className="text-signal">answered.</span>
           </>
         }
-        lede="Grouped by topic. Everything here describes how this demo actually behaves — including what is not implemented."
+        lede="Grouped by topic: memberships, payments, the facility and your account."
       />
 
       <section className="pb-20">

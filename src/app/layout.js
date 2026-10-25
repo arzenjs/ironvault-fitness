@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 import { fontVariables } from "@/lib/fonts";
 import { getSessionSafe } from "@/lib/session";
 import Providers from "@/components/layout/Providers";
-import SiteHeader from "@/components/layout/SiteHeader";
+import SiteChrome from "@/components/layout/SiteChrome";
 import SiteFooter from "@/components/layout/SiteFooter";
 import { gym, siteUrl } from "@/config/gym";
 
@@ -65,9 +65,7 @@ export default async function RootLayout({ children }) {
       </head>
       <body className="min-h-screen bg-ink font-sans text-fog antialiased">
         <Providers session={session}>
-          <SiteHeader />
-          <main id="main-content">{children}</main>
-          <SiteFooter />
+          <SiteChrome footer={<SiteFooter />}>{children}</SiteChrome>
         </Providers>
       </body>
     </html>

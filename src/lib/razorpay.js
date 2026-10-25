@@ -14,6 +14,11 @@ export function isRazorpayConfigured() {
   return Boolean(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET);
 }
 
+/** True when the configured key is a Razorpay test key (`rzp_test_…`). */
+export function isRazorpayTestMode() {
+  return (process.env.RAZORPAY_KEY_ID || "").startsWith("rzp_test_");
+}
+
 let cachedClient = null;
 
 export function getRazorpayClient() {

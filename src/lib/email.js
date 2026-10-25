@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { gym } from "@/config/gym";
 import { formatDate, formatINR } from "@/lib/format";
+import { isRazorpayTestMode } from "@/lib/razorpay";
 
 /**
  * Transactional email via Resend.
@@ -11,6 +12,20 @@ import { formatDate, formatINR } from "@/lib/format";
  */
 
 let client = null;
+
+/**
+ * Business addresses (see src/config/gym.js for what each one is for).
+ * Environment variables override the config defaults on the server. There is
+ * deliberately no fallback from one to the other: customer mail must never be
+ * routed to the staff-invitation address, nor invitations to the public inbox.
+ */
+export function getContactInbox() {
+  return (process.env.CONTACT_INBOX_EMAIL || gym.contactEmail || "").trim() || null;
+}
+
+export function getStaffInviteAddress() {
+  return (process.env.STAFF_INVITE_EMAIL || gym.staffInviteEmail || "").trim() || null;
+}
 
 export function isEmailConfigured() {
   return Boolean(process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL);
@@ -50,7 +65,7 @@ export async function sendEmail({ to, subject, html, text, replyTo }) {
 /*  Templates                                                          */
 /* ------------------------------------------------------------------ */
 
-function layout({ heading, intro, body, footerNote }) {
+function layout({ heading, intro, body, footerNote, paymentNote }) {
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${heading}</title></head>
@@ -68,7 +83,7 @@ function layout({ heading, intro, body, footerNote }) {
         <tr><td style="padding:0 32px 24px;font-size:14px;line-height:1.65;color:#d3d3d8;">${body}</td></tr>
         <tr><td style="padding:20px 32px 28px;border-top:1px solid #1b1b23;font-size:12px;line-height:1.6;color:#82828d;">
           ${footerNote || `Questions? Reply to this email or call ${gym.phone}.<br>${gym.address.full}`}
-          <br><br><span style="color:#5f5f69;">IronVault Fitness is a fictional business used for a portfolio demo. Payments run in Razorpay test mode.</span>
+          ${paymentNote ? `<br><br><span style="color:#5f5f69;">${paymentNote}</span>` : ""}
         </td></tr>
       </table>
     </td></tr>
@@ -98,6 +113,9 @@ export async function sendMembershipConfirmation({ payment, membership }) {
   const html = layout({
     heading: "Your membership is active",
     intro: `Hi ${payment.customerName || "there"} — your payment was verified and your IronVault membership is ready to use.`,
+    paymentNote: isRazorpayTestMode()
+      ? "This payment was made in Razorpay test mode. No real money was charged."
+      : "",
     body: `${rows}
       <p style="margin:0 0 12px;">Bring this email or your account dashboard to the front desk on your first visit. A coach will walk you through the floor and set up your orientation.</p>
       <p style="margin:0;"><strong style="color:#f5f5f3;">Opening hours:</strong> ${gym.hours[0].days}, ${gym.hours[0].opens}–${gym.hours[0].closes} · ${gym.hours[1].days}, ${gym.hours[1].opens}–${gym.hours[1].closes}</p>`,
@@ -110,6 +128,7 @@ export async function sendMembershipConfirmation({ payment, membership }) {
     subject: `Membership confirmed — ${membership.planName}`,
     html,
     text,
+    replyTo: getContactInbox() || undefined,
   });
 }
 
@@ -120,7 +139,12 @@ export async function sendWelcomeEmail({ name, email }) {
     body: `<p style="margin:0 0 12px;">You can choose a membership from the plans page whenever you are ready. Nothing is charged until you complete a payment through Razorpay's checkout.</p>
       <p style="margin:0;">Your dashboard keeps your membership dates, payment history and plan details in one place.</p>`,
   });
-  return sendEmail({ to: email, subject: "Your IronVault account is ready", html });
+  return sendEmail({
+    to: email,
+    subject: "Your IronVault account is ready",
+    html,
+    replyTo: getContactInbox() || undefined,
+  });
 }
 
 export async function sendStaffInvitation({ email, inviteUrl, inviterName, role }) {
@@ -137,11 +161,17 @@ export async function sendStaffInvitation({ email, inviteUrl, inviterName, role 
     subject: "Your IronVault staff invitation",
     html,
     text: `You have been invited to IronVault Fitness staff portal. Accept: ${inviteUrl} (single-use, expires in 48 hours).`,
+    // Replies go to the staff/admin invitation address — never the public contact inbox.
+    replyTo: getStaffInviteAddress() || undefined,
   });
 }
 
 export async function sendContactNotification({ name, email, phone, topic, message }) {
-  const inbox = process.env.CONTACT_INBOX_EMAIL || gym.email;
+  const inbox = getContactInbox();
+  if (!inbox) {
+    console.warn("[email] contact notification skipped — no contact inbox configured (gym.contactEmail / CONTACT_INBOX_EMAIL).");
+    return { ok: false, skipped: true };
+  }
   const html = layout({
     heading: "New contact form message",
     intro: `${name} (${email}) wrote about ${topic}.`,

@@ -3,14 +3,18 @@ import { MembershipBadge, PaymentBadge, RoleBadge } from "@/components/account/B
 import { formatDate, formatINR, paymentStatusMeta } from "@/lib/format";
 import { stateLabels } from "@/lib/membership-status";
 import ReconcileButton from "@/components/dashboard/ReconcileButton";
+import { MembershipAction, UserStatusAction } from "@/components/dashboard/AdminActions";
 
 /**
  * Staff member list.
  *
  * Each row is a <details> element, so a member's memberships and latest payment
  * expand inline without a second page. Works with the keyboard and without JS.
+ *
+ * `admin` adds the suspend/reinstate and enable/disable controls. They are only a
+ * UI affordance: the API routes behind them require an admin on the server.
  */
-export default function MemberTable({ members, canReconcile = true }) {
+export default function MemberTable({ members, canReconcile = true, admin = false }) {
   if (!members.length) {
     return (
       <div className="rounded-xl border border-dashed border-white/15 bg-coal px-5 py-12 text-center">
@@ -74,6 +78,15 @@ export default function MemberTable({ members, canReconcile = true }) {
                         {membership.statusReason ? (
                           <p className="mt-1 text-[0.625rem] text-amber-200/80">Note: {membership.statusReason}</p>
                         ) : null}
+                        {admin && (membership.storedStatus === "suspended" || membership.state !== "expired") ? (
+                          <div className="mt-2.5 flex flex-wrap">
+                            <MembershipAction
+                              membershipId={membership.id}
+                              suspended={membership.storedStatus === "suspended"}
+                              label={`${member.name}'s ${membership.planName}`}
+                            />
+                          </div>
+                        ) : null}
                       </li>
                     ))}
                   </ul>
@@ -123,6 +136,11 @@ export default function MemberTable({ members, canReconcile = true }) {
                     </dd>
                   </div>
                 </dl>
+                {admin ? (
+                  <div className="mt-3">
+                    <UserStatusAction userId={member.id} disabled={member.status === "disabled"} label={member.email} />
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>

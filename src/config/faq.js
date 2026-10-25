@@ -22,7 +22,7 @@ export const faqCategories = [
       },
       {
         q: "Can I transfer or pause my membership?",
-        a: "Pauses and transfers are handled in person at the front desk on a case-by-case basis. This demo site does not implement pause or transfer requests.",
+        a: "Pauses and transfers are handled in person at the front desk on a case-by-case basis. Ask at the front desk and a coach will help you.",
       },
     ],
   },
@@ -58,11 +58,11 @@ export const faqCategories = [
       },
       {
         q: "Do you provide towels and toiletries?",
-        a: "Showers and changing rooms are available. Towels are not provided in this demo's listed facilities — bring your own and a padlock if you want a fixed locker.",
+        a: "Showers and changing rooms are available. Towels are not provided — bring your own, plus a padlock if you want a fixed locker.",
       },
       {
         q: "Is there parking?",
-        a: "Street parking is available along Fraser Road with limited two-wheeler space at the entrance. This is demo content — confirm with the actual facility before relying on it.",
+        a: "Street parking is available along Fraser Road with limited two-wheeler space at the entrance. Two-wheeler space is limited, so arrive early at peak hours.",
       },
       {
         q: "I am new to the gym. Will someone show me around?",
@@ -80,7 +80,7 @@ export const faqCategories = [
       },
       {
         q: "Can I delete my account?",
-        a: "This demo does not include self-service deletion. Account removal is described in the privacy policy as a manual request to the front desk.",
+        a: "Account deletion is handled manually: contact the front desk and an administrator will process the request. The privacy policy explains what is removed and what must be retained for accounting.",
       },
       {
         q: "Who can see my payment history?",

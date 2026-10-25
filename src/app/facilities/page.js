@@ -10,7 +10,7 @@ import { media } from "@/config/media";
 export const metadata = {
   title: "Facilities & equipment",
   description:
-    "Strength and free weights, resistance machines, cardio and conditioning, functional turf and changing facilities at IronVault Fitness — fictional demo listings.",
+    "Strength and free weights, resistance machines, cardio and conditioning, functional turf and changing facilities at IronVault Fitness.",
   alternates: { canonical: "/facilities" },
 };
 
@@ -35,7 +35,7 @@ export default function FacilitiesPage() {
             <span className="text-signal">One standard.</span>
           </>
         }
-        lede="These are the demo facility listings for this fictional gym. Every zone below is described as an illustrative example — not a verified real-world inventory."
+        lede="Strength, resistance, cardio, functional turf and changing rooms: each zone is set up for a specific kind of training."
         meta={["1,800 sq ft", "17 hrs weekday access", "Open gym Sundays"]}
         image={media.facilities.strength}
       >
@@ -102,10 +102,6 @@ export default function FacilitiesPage() {
               size="md"
               lede="Printed at the entrance and enforced by everyone, staff included."
             />
-            <p className="mt-5 text-xs leading-relaxed text-ash/70">
-              Demo content. Facility descriptions, equipment counts and policies are illustrative for this
-              portfolio project.
-            </p>
           </div>
           <ol className="divide-y divide-white/10 border-y border-white/10">
             {etiquette.map((rule, index) => (

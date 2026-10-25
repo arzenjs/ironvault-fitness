@@ -12,7 +12,7 @@ import { gym } from "@/config/gym";
 export const metadata = {
   title: "About the gym",
   description:
-    "The story, training philosophy and environment behind IronVault Fitness — a fictional strength-first gym in Patna used for this portfolio demo.",
+    "The story, training philosophy and environment behind IronVault Fitness — a strength-first gym on Fraser Road, Patna.",
   alternates: { canonical: "/about" },
 };
 
@@ -56,7 +56,7 @@ export default function AboutPage() {
             <span className="text-signal">people who train.</span>
           </>
         }
-        lede="IronVault Fitness is a fictional premium gym created for this portfolio project. The story below is sample content, but every design and product decision around it is real."
+        lede="IronVault Fitness is a premium, strength-first gym on Fraser Road, Patna. This is how the room, the coaching and the standards came together."
         meta={["Est. 2019", "Fraser Road, Patna", "Accessible by design"]}
         image={media.about.barbell}
       >
@@ -104,11 +104,6 @@ export default function AboutPage() {
                 That order still describes the gym. Strength equipment is replaced on a schedule, not when it
                 breaks. The coaching team writes its own programming instead of importing a franchise template.
                 And every new member is walked through the floor before they are sold anything.
-              </p>
-              <p>
-                <span className="text-fog">Everything on this page is fictional sample content</span> for a
-                portfolio demonstration. The details are internally consistent, but they do not describe a real
-                business, real staff or real members.
               </p>
             </div>
 

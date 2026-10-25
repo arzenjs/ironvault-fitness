@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { AlertCircle, Eye, EyeOff, Loader2, LogIn } from "lucide-react";
-import { safeNextPath } from "@/lib/redirects";
+import { resolvePostLoginPath, safeNextPath } from "@/lib/redirects";
 
 export default function LoginForm({ nextPath }) {
   const router = useRouter();
-  const target = safeNextPath(nextPath);
+  // Only a validated, same-site path survives; null means "use the role's home".
+  const requested = safeNextPath(nextPath, null);
   const [values, setValues] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
@@ -48,7 +49,9 @@ export default function LoginForm({ nextPath }) {
         return;
       }
 
-      router.push(target);
+      // The role comes from the freshly issued session, never from the URL.
+      const session = await getSession();
+      router.push(resolvePostLoginPath(session?.user?.role, requested));
       router.refresh();
     } catch {
       setStatus("idle");
@@ -137,7 +140,7 @@ export default function LoginForm({ nextPath }) {
       <p className="pt-1 text-center text-xs text-ash">
         New here?{" "}
         <Link
-          href={target === "/account" ? "/register" : `/register?next=${encodeURIComponent(target)}`}
+          href={requested ? `/register?next=${encodeURIComponent(requested)}` : "/register"}
           className="font-medium text-fog underline decoration-signal/50 underline-offset-4 hover:text-signal"
         >
           Create an account

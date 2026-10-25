@@ -2,7 +2,7 @@ import Reveal from "@/components/ui/Reveal";
 import StatCounter from "@/components/ui/StatCounter";
 import { gym } from "@/config/gym";
 
-/** Animated counters. Values are clearly labelled sample figures for the demo. */
+/** Animated counters for the headline figures. */
 export default function StatsBand() {
   return (
     <section className="relative overflow-hidden border-y border-white/10 bg-ink" aria-labelledby="stats-heading">
@@ -12,9 +12,6 @@ export default function StatsBand() {
           <h2 id="stats-heading" className="eyebrow">
             The floor in numbers
           </h2>
-          <p className="font-mono text-[0.5625rem] uppercase tracking-[0.2em] text-ash/60">
-            Sample demo data — not verified figures
-          </p>
         </div>
 
         <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] lg:grid-cols-4">

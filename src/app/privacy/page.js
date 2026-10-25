@@ -4,7 +4,7 @@ import { gym } from "@/config/gym";
 export const metadata = {
   title: "Privacy policy",
   description:
-    "What data the IronVault Fitness demo collects, where it is stored, which third parties are involved and how to request removal.",
+    "What data IronVault Fitness collects, where it is stored, which third parties are involved and how to request removal.",
   alternates: { canonical: "/privacy" },
 };
 
@@ -13,8 +13,7 @@ const sections = [
     id: "scope",
     title: "Scope of this policy",
     body: [
-      "This policy describes the data practices of the IronVault Fitness demo application — a portfolio project. IronVault Fitness is a fictional business; there is no real gym collecting your data. The practices below describe what the code in this repository actually does.",
-      "This document has not been legally reviewed and is not a compliance certification. It exists so the demo's real data flows are documented honestly.",
+      "This policy describes what personal data IronVault Fitness collects through this website, why we collect it and who it is shared with. It reflects how the application actually handles data.",
     ],
   },
   {
@@ -59,8 +58,8 @@ const sections = [
     id: "retention",
     title: "Retention and deletion",
     body: [
-      "Membership and payment records are kept for the life of the demo database so the dashboard and staff tools have history to display.",
-      "This demo does not implement self-service account deletion. In a production deployment, deletion requests would be handled manually by an administrator and would remove account data while retaining the minimum payment records required for accounting.",
+      "Membership and payment records are kept for as long as your account exists so your dashboard and our staff tools have history to display.",
+      "There is no self-service account deletion. Deletion requests are handled manually by an administrator and remove account data while retaining the minimum payment records required for accounting.",
     ],
   },
   {
@@ -77,7 +76,7 @@ const sections = [
     title: "Your choices",
     body: [
       "You can view your own membership and payment records at any time from the account dashboard.",
-      `To ask a question about your data, email ${gym.email}. In this demo no real data is processed at that address.`,
+      `To ask a question about your data or request deletion, email ${gym.contactEmail}.`,
     ],
   },
 ];
@@ -87,9 +86,8 @@ export default function PrivacyPage() {
     <LegalPage
       title="Privacy policy"
       updated="23 October 2026"
-      intro="A plain-language description of the data this demo collects, why it exists and where it goes. Written to match the actual code — not a generic template."
+      intro="A plain-language description of the data we collect, why it exists and where it goes."
       sections={sections}
-      footerNote="Demo notice: IronVault Fitness is fictional and this policy is illustrative. It has not been legally reviewed and is not a statement of compliance with any specific regulation."
     />
   );
 }
