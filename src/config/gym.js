@@ -14,8 +14,8 @@ export const gym = {
   phone: "+91 98765 12340",
   phoneHref: "tel:+919876512340",
   whatsapp: "919876512340",
-  contactEmail: process.env.CONTACT_INFO_EMAIL || "contact@ironvault.example",
-  staffInviteEmail: process.env.STAFF_INVITE_EMAIL || "team@ironvault.example",
+  contactEmail: process.env.CONTACT_INBOX_EMAIL?.trim() || "contact@ironvault.example",
+  staffInviteEmail: process.env.STAFF_INVITE_EMAIL?.trim() || "team@ironvault.example",
   mapsQuery: "Fraser Road, Patna, Bihar, India",
   currency: "INR",
   hours: [

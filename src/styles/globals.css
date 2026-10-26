@@ -411,6 +411,19 @@
   display: none;
 }
 
+/* Fades the trailing edge of a horizontally scrollable strip so it is obvious there is more. */
+.fade-end,
+.fade-end-below-lg {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+}
+@media (min-width: 1024px) {
+  .fade-end-below-lg {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
 /* Utility: fade in for non-JS/fallback rendering (image placeholders). */
 @keyframes soft-in {
   from { opacity: 0; }

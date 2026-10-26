@@ -40,8 +40,8 @@ export default function AdminShell({ user, children }) {
         </div>
       </header>
 
-      <div className="shell grid gap-6 py-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10 lg:py-10">
-        <aside className="lg:sticky lg:top-24 lg:self-start">
+      <div className="shell grid grid-cols-[minmax(0,1fr)] gap-5 pb-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10 lg:py-10">
+        <aside className="sticky top-16 z-30 -mx-[clamp(1.25rem,4.5vw,4rem)] border-b border-white/10 bg-ink/90 px-[clamp(1.25rem,4.5vw,4rem)] py-2 backdrop-blur-xl lg:top-24 lg:mx-0 lg:self-start lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
           <AdminNav />
         </aside>
         <div className="min-w-0 pb-16">{children}</div>

@@ -120,11 +120,11 @@ export default async function AdminStaffPage() {
                   key={id}
                   className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 bg-coal px-4 py-3"
                 >
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1 basis-56">
                     <p className="truncate text-sm font-medium text-fog">{member.name}</p>
                     <p className="truncate text-xs text-ash">{member.email}</p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:w-auto sm:justify-end">
                     <RoleBadge role={member.role} />
                     <MembershipBadge state={member.status === "active" ? "active" : "suspended"} label={member.status} />
                     {id === admin.id ? (

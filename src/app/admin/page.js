@@ -35,7 +35,7 @@ export default async function AdminOverviewPage() {
         <h2 id="metrics-heading" className="sr-only">
           Key metrics
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
           <StatCard
             label="Verified revenue"
             value={formatINR(revenue.totalPaise)}
@@ -148,7 +148,7 @@ export default async function AdminOverviewPage() {
                   key={payment._id.toString()}
                   className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 bg-coal px-4 py-3"
                 >
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1 basis-56">
                     <p className="text-sm text-fog">
                       {payment.customerName || "Member"} · {payment.planName} · {formatINR(payment.amountPaise)}
                     </p>
@@ -157,7 +157,7 @@ export default async function AdminOverviewPage() {
                       {payment.failureReason ? ` · ${payment.failureReason}` : ""}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:w-auto sm:justify-end">
                     <PaymentBadge tone={meta.tone}>{meta.label}</PaymentBadge>
                     <ReconcileButton paymentId={payment._id.toString()} />
                   </div>

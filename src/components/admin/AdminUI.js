@@ -22,7 +22,7 @@ export function StatCard({ label, value, hint, href, tone = "default" }) {
     <>
       <p className="eyebrow">{label}</p>
       <p
-        className={`display mt-2 text-[clamp(1.6rem,3vw,2.2rem)] ${
+        className={`display mt-2 break-words text-[clamp(1.35rem,3vw,2.2rem)] ${
           tone === "warn" ? "text-amber-200" : tone === "bad" ? "text-red-200" : "text-fog"
         }`}
       >
@@ -31,7 +31,7 @@ export function StatCard({ label, value, hint, href, tone = "default" }) {
       {hint ? <p className="mt-1 text-[0.6875rem] leading-snug text-ash">{hint}</p> : null}
     </>
   );
-  const classes = "card block p-5 transition-colors";
+  const classes = "card block min-w-0 p-4 transition-colors sm:p-5";
   return href ? (
     <Link href={href} className={`${classes} hover:border-white/25`}>
       {body}
@@ -66,13 +66,13 @@ export function FilterTabs({ basePath, param, current, options, extra = {} }) {
     return qs ? `${basePath}?${qs}` : basePath;
   };
   return (
-    <ul className="no-scrollbar -mx-1 flex gap-1 overflow-x-auto px-1">
+    <ul className="no-scrollbar fade-end flex gap-1 overflow-x-auto pr-6">
       {options.map((option) => (
         <li key={option.value} className="shrink-0">
           <Link
             href={hrefFor(option.value)}
             aria-current={current === option.value ? "true" : undefined}
-            className={`block whitespace-nowrap rounded-full px-3.5 py-2 text-xs transition ${
+            className={`block whitespace-nowrap rounded-full px-3.5 py-2.5 text-xs transition ${
               current === option.value ? "bg-white/10 font-medium text-fog" : "text-ash hover:text-fog"
             }`}
           >

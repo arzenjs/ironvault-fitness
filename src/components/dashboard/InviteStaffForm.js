@@ -54,8 +54,8 @@ export default function InviteStaffForm() {
 
   return (
     <form onSubmit={submit} className="space-y-3">
-      <div className="grid gap-3 sm:grid-cols-[1.6fr_1fr_auto]">
-        <div>
+      <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="sm:col-span-2">
           <label htmlFor="invite-email" className="field-label">
             Email
           </label>

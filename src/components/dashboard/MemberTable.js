@@ -30,7 +30,7 @@ export default function MemberTable({ members, canReconcile = true, admin = fals
     <div className="space-y-2">
       {members.map((member) => (
         <details key={member.id} className="group rounded-xl border border-white/10 bg-coal open:border-white/20">
-          <summary className="flex cursor-pointer list-none flex-wrap items-center gap-3 px-4 py-3 transition hover:bg-white/[0.03]">
+          <summary className="flex min-h-14 cursor-pointer list-none items-center [&::-webkit-details-marker]:hidden gap-3 px-4 py-3 transition hover:bg-white/[0.03]">
             <span className="min-w-0 flex-1">
               <span className="flex flex-wrap items-center gap-2">
                 <span className="truncate text-sm font-medium text-fog">{member.name}</span>
@@ -43,7 +43,7 @@ export default function MemberTable({ members, canReconcile = true, admin = fals
               <span className="mt-0.5 block truncate text-xs text-ash">{member.email}</span>
             </span>
 
-            <span className="flex items-center gap-2">
+            <span className="flex shrink-0 items-center gap-2">
               <MembershipBadge state={member.currentState} label={stateLabels[member.currentState] || member.currentState} />
               <span className="hidden font-mono text-[0.625rem] uppercase tracking-[0.12em] text-ash sm:block">
                 {member.latestPayment ? paymentStatusMeta[member.latestPayment.status]?.label : "No payment"}

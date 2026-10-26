@@ -44,7 +44,7 @@ export default async function AdminPaymentsPage({ searchParams }) {
         description="Every payment attempt with its provider references. Reconcile asks Razorpay what actually happened — a payment can never be marked successful by hand."
       />
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
+      <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4">
         <StatCard label="Verified revenue" value={formatINR(revenue.totalPaise)} hint="Sum of successful payments only" />
         <StatCard label="Memberships sold" value={revenue.count} hint="One membership per successful payment" />
       </div>
@@ -91,7 +91,7 @@ export default async function AdminPaymentsPage({ searchParams }) {
                     needsAttention ? "border-amber-300/25 bg-amber-300/[0.05]" : "border-white/10 bg-coal"
                   }`}
                 >
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1 basis-56">
                     <p className="text-sm text-fog">
                       {payment.customerName || "Member"} · {payment.planName} · {formatINR(payment.amountPaise)}
                     </p>
@@ -109,7 +109,7 @@ export default async function AdminPaymentsPage({ searchParams }) {
                       </p>
                     ) : null}
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:w-auto sm:justify-end">
                     <PaymentBadge tone={meta.tone}>{meta.label}</PaymentBadge>
                     {needsAttention ? <ReconcileButton paymentId={payment._id.toString()} /> : null}
                   </div>

@@ -76,7 +76,7 @@ export default function SiteFooter() {
               ))}
               <li>
                 <Link href="/login" className="link-underline hover:text-fog">
-                  Member log in
+                 Already a Member? Login
                 </Link>
               </li>
             </ul>

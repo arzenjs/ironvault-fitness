@@ -38,7 +38,7 @@ export default async function AdminUsersPage({ searchParams }) {
         description="Activate or deactivate any account. Disabled accounts cannot sign in and lose access on their next request. You cannot change your own account, and the last active admin is protected."
       />
 
-      <form method="GET" role="search" className="card mt-8 grid gap-3 p-4 sm:grid-cols-[1.6fr_1fr_auto] md:p-5">
+      <form method="GET" role="search" className="card mt-8 grid gap-3 p-4 sm:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_auto] md:p-5">
         <div>
           <label htmlFor="user-q" className="field-label">
             Search
@@ -81,7 +81,7 @@ export default async function AdminUsersPage({ searchParams }) {
                   key={id}
                   className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 bg-coal px-4 py-3"
                 >
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1 basis-56">
                     <p className="flex flex-wrap items-center gap-2 text-sm font-medium text-fog">
                       <span className="truncate">{account.name}</span>
                       <RoleBadge role={account.role} />
@@ -91,7 +91,7 @@ export default async function AdminUsersPage({ searchParams }) {
                       Joined {formatDate(account.createdAt)} · Last sign-in {account.lastLoginAt ? formatDateTime(account.lastLoginAt) : "never"}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:w-auto sm:justify-end">
                     <MembershipBadge state={account.status === "active" ? "active" : "suspended"} label={account.status} />
                     {isSelf ? (
                       <span className="font-mono text-[0.5rem] uppercase tracking-[0.12em] text-ash">you</span>

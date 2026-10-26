@@ -8,8 +8,8 @@ import { membershipPlans } from "@/config/membership-plans";
 export default function MemberSearchForm({ query = "", status = "all", planId = "all" }) {
   return (
     <form method="GET" className="card p-4 md:p-5" role="search">
-      <div className="grid gap-3 sm:grid-cols-[1.6fr_1fr_1fr_auto]">
-        <div>
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,1fr)_auto]">
+        <div className="sm:col-span-2 xl:col-span-1">
           <label htmlFor="member-q" className="field-label">
             Search
           </label>
@@ -48,8 +48,8 @@ export default function MemberSearchForm({ query = "", status = "all", planId = 
             ))}
           </select>
         </div>
-        <div className="flex items-end">
-          <button type="submit" className="btn btn-primary w-full sm:w-auto">
+        <div className="flex items-end sm:col-span-2 xl:col-span-1">
+          <button type="submit" className="btn btn-primary w-full xl:w-auto">
             <Search size={15} aria-hidden="true" /> Search
           </button>
         </div>

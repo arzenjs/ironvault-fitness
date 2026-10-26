@@ -8,7 +8,7 @@ export default function AdminSignOut() {
     <button
       type="button"
       onClick={() => signOut({ callbackUrl: "/" })}
-      className="rounded-full border border-white/15 p-2.5 text-ash transition hover:text-fog"
+      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 text-ash transition hover:text-fog"
       aria-label="Sign out"
       title="Sign out"
     >
